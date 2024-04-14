@@ -7,7 +7,7 @@ import {
   Dialog,
   Grid,
   TextField,
-  Typography,Menu,Fade
+  Typography,Menu,Fade,FormControl, InputLabel
 } from "@mui/material";
 import { deleteDoc, doc, getDoc } from "firebase/firestore";
 import { useEffect, useState } from "react";
@@ -35,7 +35,7 @@ const Serviceform = (props) => {
   const [responseTime, setResponseTime] = useState();
   const [guestCalled, setguestCalled] = useState();
   const [followUp, setfollowUp] = useState();
- const departmentType = ["House keeping" ,"Engineering" ,"Room Service" ,"Security" ,"General"];
+  const departmentType = ["House keeping", "Engineering", "Room Service", "Security", "General"];
 
   // const [imageAsFile, setImageAsFile] = useState("");
   const [isLoading, setIsLoading] = useState(false);
@@ -162,13 +162,13 @@ const Serviceform = (props) => {
 
   return (
     <>
-      <Dialog open={props.open} >
+      <Dialog open={props.open}  maxWidth={"lg"}>
         <Card style={{ overflowY:"auto"}}>
           <CardHeader
             title={
               props.CategoriesId
-                ? t("category.page.form.edit.Category")
-                : t("category.page.form.add.Category")
+                ? t("request.page.form.edit.request")
+                : t("request.page.form.add.request")
             }
             titleTypographyProps={{ variant: "h6" }}
           />
@@ -178,7 +178,7 @@ const Serviceform = (props) => {
                 <Grid item xs={12}>
                 <TextField
                     fullWidth
-                    label={t("user-detail.table.name")}
+                    label={t("request.guestName")}
                     value={guestName}
                     style={{ marginBottom: "15px" }}
                     helperText={
@@ -191,56 +191,91 @@ const Serviceform = (props) => {
                   />
                   <TextField
                     fullWidth
-                    label={t("user-detail.table.name")}
-                    value={guestName}
+                    label={t("request.guestRM")}
+                    value={guestRM}
                     style={{ marginBottom: "15px" }}
                     helperText={
                       errorMessage.nameerror ? errorMessage.nameerror : ""
                     }
                     error={errorMessage.nameerror ? true : false}
                     onChange={(e) => {
-                      setguestName(e.target.value);
+                      setguestRM(e.target.value);
                     }}
                   />
                   <TextField
                   fullWidth
-                  label={t("user-detail.table.email")}
-                  value={guestRM}
+                  label={t("request.orderRes")}
+                  value={orderRes}
                   style={{ marginBottom: "15px" }}
                   helperText={
                     errorMessage.nameerror ? errorMessage.nameerror : ""
                   }
                   error={errorMessage.nameerror ? true : false}
                   onChange={(e) => {
-                    setguestRM(e.target.value);
+                    setorderRes(e.target.value);
                   }}
                 />
-              <Select
-                open={open}
-                style={{ marginBottom: "15px" }}
-                onClose={() => setOpen(false)}
-                onOpen={() => setOpen(true)}
-                value={department}
-                label={t("user-detail.table.type")}
-                onChange={(e) => setdepartment(e.target.value)}
-              >
-                {departmentType.map((e,i)=>{
-                <MenuItem onClick={handleClose} value={e} key={i}>{e}</MenuItem>
-                })}
-              </Select>
+             <Select
+                    open={open}
+                    style={{ margin: "15px 0" }}
+                    onClose={() => setOpen(false)}
+                    onOpen={() => setOpen(true)}
+                    value={department}
+                    label={t("request.department")}
+                    onChange={(e) => setdepartment(e.target.value)}
+                  >
+                    {departmentType.map((e, i) => (
+                      <MenuItem onClick={handleClose} value={e} key={i}>
+                        {e}
+                      </MenuItem>
+                    ))}
+                  </Select>
+                  <Select
+                    open={open}
+                    style={{ margin: "15px", }}
+                    onClose={() => setOpen(false)}
+                    onOpen={() => setOpen(true)}
+                    value={request}
+                    label={t("request.request")}
+                    onChange={(e) => setrequest(e.target.value)}
+                  >
+                    {departmentType.map((e, i) => (
+                      <MenuItem onClick={handleClose} value={e} key={i}>
+                        {e}
+                      </MenuItem>
+                    ))}
+                  </Select>
               <TextField
               fullWidth
-              label={t("user-detail.table.orderRes")}
-              value={orderRes}
+              inputProps={{ inputMode: "numeric", pattern: "[0-9]*" }}
+              type="number"
+              label={t("request.followUp")}
+              value={followUp}
               style={{ marginBottom: "15px" }}
               helperText={
                 errorMessage.nameerror ? errorMessage.nameerror : ""
               }
               error={errorMessage.nameerror ? true : false}
               onChange={(e) => {
-                setorderRes(e.target.value);
+                setfollowUp(e.target.value);
               }}
-            /><TextField
+            />
+            <Select
+              open={open}
+              style={{ margin: "15px", }}
+              onClose={() => setOpen(false)}
+              onOpen={() => setOpen(true)}
+              value={status}
+              label={t("request.status")}
+              onChange={(e) => setStatus(e.target.value)}
+            >
+              {departmentType.map((e, i) => (
+                <MenuItem onClick={handleClose} value={e} key={i}>
+                  {e}
+                </MenuItem>
+              ))}
+            </Select>
+            <TextField
             fullWidth
             label={t("user-detail.table.request")}
             value={request}
@@ -252,7 +287,8 @@ const Serviceform = (props) => {
             onChange={(e) => {
               setrequest(e.target.value);
             }}
-          /><TextField
+          />
+          <TextField
           fullWidth
           label={t("user-detail.table.phone")}
           value={orderTaker}
@@ -265,6 +301,26 @@ const Serviceform = (props) => {
             setorderTaker(e.target.value);
           }}
         />
+        <Grid item sm={6} xs={12}>
+                  <FormControl fullWidth>
+                    <InputLabel id="demo-controlled-open-select-label">
+                      {t("request.guestCalled")}
+                    </InputLabel>
+                    <Select
+                      labelId="demo-controlled-open-select-label"
+                      id="demo-controlled-open-select"
+                      open={open}
+                      onClose={() => setOpen(false)}
+                      onOpen={() => setOpen(true)}
+                      value={guestCalled}
+                      label={t("request.guestCalled")}
+                      onChange={(e) => setguestCalled(e.target.value)}
+                    >
+                      <MenuItem value={false}>{t("request.no")}</MenuItem>
+                      <MenuItem value={true}>{t("request.yes")}</MenuItem>
+                    </Select>
+                  </FormControl>
+                </Grid>
                 </Grid>
                 {/* <Grid item xs={12} display="flex" gap="1rem">
                   <Button variant="contained" component="label">

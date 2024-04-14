@@ -54,7 +54,7 @@ const Request = () => {
         >
           <Button variant="contained" onClick={handleClickOpen}>
             <Plus sx={{ marginRight: 1.5 }} />
-            {t("subscription.page.btn.newsubscription")}
+            {t("request.page.form.add.request")}
           </Button>
           
         </Grid>
