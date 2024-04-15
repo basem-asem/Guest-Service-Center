@@ -109,11 +109,7 @@ const ForgotPass = () => {
               }}
             >
               <img
-                src={
-                  theme.palette.mode === "light"
-                    ? appimagelight.src
-                    : appimagedark.src
-                }
+                src={appimagelight.src}
                 width={140}
                 height={60}
               />
