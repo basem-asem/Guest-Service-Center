@@ -14,8 +14,7 @@ import BlankLayout from "src/@core/layouts/BlankLayout";
 
 // ** Demo Imports
 import FooterIllustrationsV1 from "src/views/pages/auth/FooterIllustration";
-import appimagelight from "../../../../public/images/logos/app-image-light.svg";
-import appimagedark from "../../../../public/images/logos/app-image-dark.svg";
+import appimagelight from "../../../../public/images/logos/favicon.png";
 import { Alert, Snackbar, TextField } from "@mui/material";
 import { auth } from "src/configs/firebaseConfig";
 import {
