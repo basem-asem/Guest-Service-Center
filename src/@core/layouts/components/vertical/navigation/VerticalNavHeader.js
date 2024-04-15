@@ -9,8 +9,7 @@ import Typography from "@mui/material/Typography";
 // ** Configs
 import themeConfig from "src/configs/themeConfig";
 
-import appimagelight from "../../../../../../public/images/logos/app-image-light.svg";
-import appimagedark from "../../../../../../public/images/logos/app-image-dark.svg";
+import appimagelight from "../../../../../../public/images/logos/favicon.png";
 import { useRouter } from "next/router";
 
 // ** Styled Components
@@ -53,11 +52,7 @@ const VerticalNavHeader = (props) => {
         <Link passHref href="/dashboard" locale={locale}>
           <StyledLink>
             <img
-              src={
-                theme.palette.mode === "light"
-                  ? appimagelight.src
-                  : appimagedark.src
-              }
+              src={appimagelight.src}
               width={150}
               height={50}
             />

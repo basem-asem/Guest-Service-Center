@@ -24,17 +24,17 @@ import { BorderAll, BorderColor } from "mdi-material-ui";
 
 const Serviceform = (props) => {
   // ** States
-  const [guestName, setguestName] = useState();
-  const [guestRM, setguestRM] = useState();
-  const [orderTaker, setorderTaker] = useState();
-  const [request, setrequest] = useState();
-  const [orderRes, setorderRes] = useState();
-  const [department, setdepartment] = useState();
-  const [status, setStatus] = useState();
-  const [requestDoneTime, setRequestDoneTime] = useState();
-  const [responseTime, setResponseTime] = useState();
-  const [guestCalled, setguestCalled] = useState();
-  const [followUp, setfollowUp] = useState();
+  const [guestName, setguestName] = useState('');
+  const [guestRM, setguestRM] = useState('');
+  const [orderTaker, setorderTaker] = useState('');
+  const [request, setrequest] = useState('');
+  const [orderRes, setorderRes] = useState('');
+  const [department, setdepartment] = useState('');
+  const [status, setStatus] = useState('');
+  const [requestDoneTime, setRequestDoneTime] = useState('');
+  const [responseTime, setResponseTime] = useState('');
+  const [guestCalled, setguestCalled] = useState(false);
+  const [followUp, setfollowUp] = useState(0);
   const departmentType = ["House keeping", "Engineering", "Room Service", "Security", "General"];
 
   // const [imageAsFile, setImageAsFile] = useState("");
@@ -44,7 +44,7 @@ const Serviceform = (props) => {
 
   const [anchorEl, setAnchorEl] = useState(null);
   const handleClick = (event) => {
-    setAnchorEl(event.currentTarget);
+    setdepartment(event.currentTarget);
   };
   const handleClose = () => {
     setAnchorEl(null);
@@ -159,7 +159,7 @@ const Serviceform = (props) => {
       fetchserviceDetail();
     }
   }, [props.open]);
-
+console.log(department)
   return (
     <>
       <Dialog open={props.open}  maxWidth={"lg"}>
@@ -216,21 +216,21 @@ const Serviceform = (props) => {
                   }}
                 />
              <Select
-                    open={open}
-                    style={{ margin: "15px 0" }}
-                    onClose={() => setOpen(false)}
-                    onOpen={() => setOpen(true)}
-                    value={department}
-                    label={t("request.department")}
-                    onChange={(e) => setdepartment(e.target.value)}
-                  >
-                    {departmentType.map((e, i) => (
-                      <MenuItem onClick={handleClose} value={e} key={i}>
-                        {e}
-                      </MenuItem>
-                    ))}
-                  </Select>
-                  <Select
+  open={open}
+  style={{ margin: "15px 0" }}
+  onClose={() => setOpen(false)}
+  onOpen={() => setOpen(true)}
+  value={department}
+  label={t("request.department")}
+  onChange={(e) => setdepartment(e.target.value)} // Update department state
+>
+  {departmentType.map((e, i) => (
+    <MenuItem onClick={()=>handleClick(e)}value={e} key={i}>
+      {e}
+    </MenuItem>
+  ))}
+</Select>
+                  {/* <Select
                     open={open}
                     style={{ margin: "15px", }}
                     onClose={() => setOpen(false)}
@@ -244,7 +244,7 @@ const Serviceform = (props) => {
                         {e}
                       </MenuItem>
                     ))}
-                  </Select>
+                  </Select> */}
               <TextField
               fullWidth
               inputProps={{ inputMode: "numeric", pattern: "[0-9]*" }}
@@ -260,7 +260,7 @@ const Serviceform = (props) => {
                 setfollowUp(e.target.value);
               }}
             />
-            <Select
+            {/* <Select
               open={open}
               style={{ margin: "15px", }}
               onClose={() => setOpen(false)}
@@ -274,7 +274,7 @@ const Serviceform = (props) => {
                   {e}
                 </MenuItem>
               ))}
-            </Select>
+            </Select> */}
             <TextField
             fullWidth
             label={t("user-detail.table.request")}
@@ -306,7 +306,7 @@ const Serviceform = (props) => {
                     <InputLabel id="demo-controlled-open-select-label">
                       {t("request.guestCalled")}
                     </InputLabel>
-                    <Select
+                    {/* <Select
                       labelId="demo-controlled-open-select-label"
                       id="demo-controlled-open-select"
                       open={open}
@@ -318,7 +318,7 @@ const Serviceform = (props) => {
                     >
                       <MenuItem value={false}>{t("request.no")}</MenuItem>
                       <MenuItem value={true}>{t("request.yes")}</MenuItem>
-                    </Select>
+                    </Select> */}
                   </FormControl>
                 </Grid>
                 </Grid>

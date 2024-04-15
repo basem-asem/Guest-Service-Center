@@ -1,6 +1,6 @@
 import anime from "animejs";
 import React, { useEffect, useState } from "react";
-import appimagelight from "../../../../public/images/logos/app-image-light.svg";
+import appimagelight from "../../../../public/images/logos/favicon.png";
 import themeConfig from "src/configs/themeConfig";
 
 const SplashScreen = ({ finishLoading }) => {

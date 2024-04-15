@@ -24,8 +24,7 @@ import Grid from "@mui/material/Grid";
 import { FormHelperText } from "@mui/material";
 
 // ** Icons Imports
-import appimagelight from "../../public/images/logos/app-image-light.svg";
-import appimagedark from "../../public/images/logos/app-image-dark.svg";
+import favicon from "../../public/images/logos/favicon.png";
 import EyeOutline from "mdi-material-ui/EyeOutline";
 import EyeOffOutline from "mdi-material-ui/EyeOffOutline";
 import { signInWithEmailAndPassword } from "firebase/auth";
@@ -145,24 +144,20 @@ const LoginPage = () => {
     <Box className="content-center">
       <Card sx={{ zIndex: 1 }}>
         <CardContent
-          sx={{ padding: (theme) => `${theme.spacing(12, 9, 7)} !important` }}
+          sx={{ padding: (theme) => `${theme.spacing(1, 9, 7)} !important` }}
         >
           <Box
             sx={{
-              mb: 7,
+              mb: 5,
               display: "flex",
               alignItems: "center",
               justifyContent: "center",
             }}
           >
             <img
-              src={
-                theme.palette.mode === "light"
-                  ? appimagelight.src
-                  : appimagedark.src
-              }
-              width={150}
-              height={60}
+              src={favicon.src}
+              width={140}
+              height={140}
             />
           </Box>
           <Box sx={{ mb: 6 }}>

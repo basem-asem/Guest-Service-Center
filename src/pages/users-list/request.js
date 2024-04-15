@@ -2,7 +2,7 @@ import { Grid, InputAdornment, TextField, Typography, Button } from "@mui/materi
 import { AccountSearch } from "mdi-material-ui";
 import React, { useEffect, useState } from "react";
 import useTranslation from "src/@core/hooks/useTranslation";
-import { getUsersByType } from "src/@core/utils/firebaseutils";
+import { getStaticData } from "src/@core/utils/firebaseutils";
 import UserTable from "src/views/tables/UserTable";
 import { Plus } from "mdi-material-ui";
 import UserForm from "src/views/forms/UserForm";
@@ -31,9 +31,12 @@ const Request = () => {
   //   });
   // };
 
-  // useEffect(() => {
-  //   filterData();
-  // }, [loading]);
+  useEffect(() => {
+    getStaticData("requests").then((allfaqs) => {
+      setUsers(allfaqs);
+      setLoading(false);
+    });
+    }, [loading]);
 
   return (
     <>
