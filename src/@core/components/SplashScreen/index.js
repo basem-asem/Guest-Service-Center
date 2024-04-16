@@ -39,7 +39,7 @@ const SplashScreen = ({ finishLoading }) => {
         alignItems: "center",
       }}
     >
-      <img id="splashLogo" src={appimagelight.src} width={200} height={100} />
+      <img id="splashLogo" src={appimagelight.src} width={200} height={200} />
     </div>
   );
 };

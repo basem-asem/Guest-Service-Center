@@ -26,7 +26,7 @@ class CustomDocument extends Document {
             sizes="180x180"
             href="/images/apple-touch-icon.png"
           />
-          <link rel="shortcut icon" href="/images/favicon.svg" />
+          <link rel="shortcut icon" href="/images/favicon.png" />
         </Head>
         <body>
           <Main />

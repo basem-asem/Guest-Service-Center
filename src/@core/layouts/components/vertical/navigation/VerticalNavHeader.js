@@ -54,7 +54,7 @@ const VerticalNavHeader = (props) => {
             <img
               src={appimagelight.src}
               width={150}
-              height={50}
+              height={150}
             />
           </StyledLink>
         </Link>

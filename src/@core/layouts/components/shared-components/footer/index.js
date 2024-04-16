@@ -32,7 +32,7 @@ const Footer = props => {
           width: '100%',
           borderTopLeftRadius: 14,
           borderTopRightRadius: 14,
-          padding: theme.spacing(4, 6),
+          padding: theme.spacing(2, 6),
           ...(contentWidth === 'boxed' && { '@media (min-width:1440px)': { maxWidth: 1440 } })
         }}
       >

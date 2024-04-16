@@ -24,13 +24,13 @@ const FooterContent = () => {
       <Typography variant="body2">{t("footer.Powered by")} </Typography>
       <Link
         target="_blank"
-        href="https://www.my-technology.com/"
+        href="https://www.tgphotels.com/"
         style={{ display: "flex" }}
       >
         <img
           src={footerimage.src}
           width={140}
-          height={40}
+          height={100}
           style={{ opacity: 0.8 }}
         />
       </Link>

@@ -34,7 +34,7 @@ const Serviceform = (props) => {
   const [requestDoneTime, setRequestDoneTime] = useState('');
   const [responseTime, setResponseTime] = useState('');
   const [guestCalled, setguestCalled] = useState(false);
-  const [followUp, setfollowUp] = useState(0);
+  const [followUp, setfollowUp] = useState("");
   const departmentType = ["House keeping", "Engineering", "Room Service", "Security", "General"];
 
   // const [imageAsFile, setImageAsFile] = useState("");
@@ -216,20 +216,20 @@ console.log(department)
                   }}
                 />
              <Select
-  open={open}
-  style={{ margin: "15px 0" }}
-  onClose={() => setOpen(false)}
-  onOpen={() => setOpen(true)}
-  value={department}
-  label={t("request.department")}
-  onChange={(e) => setdepartment(e.target.value)} // Update department state
->
-  {departmentType.map((e, i) => (
-    <MenuItem onClick={()=>handleClick(e)}value={e} key={i}>
-      {e}
-    </MenuItem>
-  ))}
-</Select>
+                open={open}
+                style={{ margin: "15px 0" }}
+                onClose={() => setOpen(false)}
+                onOpen={() => setOpen(true)}
+                value={department}
+                label={t("request.department")}
+                onChange={(e) => setdepartment(e.target.value)} // Update department state
+              >
+                {departmentType.map((e, i) => (
+                  <MenuItem onClick={()=>handleClick(e)}value={e} key={i}>
+                    {e}
+                  </MenuItem>
+                ))}
+              </Select>
                   {/* <Select
                     open={open}
                     style={{ margin: "15px", }}

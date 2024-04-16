@@ -104,5 +104,12 @@
 
     "Rows per page": "Rows per page",
     "footer.Powered by": "Powered by",
-    "NoRecord": "No record Found..."
+    "NoRecord": "No record Found...",
+    "request.guestName":"Guest Name",
+    "request.guestRM":"Guest Room",
+    "request.request":"Request",
+    "request.status":"Status",
+    "request.orderRes":"Assigned To",
+    "request.department":"Department",
+    "request.guestCalled":"Guest Called"
 }

@@ -103,11 +103,13 @@ const UserTable = ({ children, loading, setLoading, type }) => {
           <Table sx={{ minWidth: 650 }} aria-label="simple table">
             <TableHead>
               <TableRow>
-                <TableCell>{t("user-detail.table.image")}</TableCell>
-                <TableCell align="center">{t("user-detail.table.name")}</TableCell>
-                <TableCell align="center">{t("user-detail.table.email")}</TableCell>
-                <TableCell align="center">{t("user-detail.table.phone")}</TableCell>
-                {/* <TableCell>{t("supplier.cash.on.delivery")}</TableCell> */}
+                <TableCell align="center">{t("request.guestName")}</TableCell>
+                <TableCell align="center">{t("request.guestRM")}</TableCell>
+                <TableCell align="center">{t("request.request")}</TableCell>
+                <TableCell align="center">{t("request.status")}</TableCell>
+                <TableCell align="center">{t("request.orderRes")}</TableCell>
+                <TableCell align="center">{t("request.department")}</TableCell>
+                <TableCell align="center">{t("request.guestCalled")}</TableCell>
                 <TableCell align="center">{t("table.action")}</TableCell>
               </TableRow>
             </TableHead>

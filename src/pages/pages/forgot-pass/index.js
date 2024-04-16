@@ -110,8 +110,8 @@ const ForgotPass = () => {
             >
               <img
                 src={appimagelight.src}
-                width={140}
-                height={60}
+                width={150}
+                height={150}
               />
             </Box>
             <Box sx={{ mb: 6 }}>
