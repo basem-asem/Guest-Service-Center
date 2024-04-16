@@ -1,5 +1,7 @@
 import {
+  Badge,
   CircularProgress,
+  Icon,
   IconButton,
   Paper,
   Table,
@@ -10,17 +12,14 @@ import {
   TablePagination,
   TableRow,
 } from "@mui/material";
-import { AccountLock, AccountLockOpen, Eye } from "mdi-material-ui";
+import { AccountLock, AccountLockOpen, Eye, Phone, Delete, Pencil } from "mdi-material-ui";
 import React, { useEffect, useState } from "react";
 import Link from "next/link";
 import useTranslation from "src/@core/hooks/useTranslation";
 import { useRouter } from "next/router";
 import BlockDailog from "../dailogs/BlockDailog";
-import { Button } from "@mui/material";
 import { doc, updateDoc, deleteDoc } from "firebase/firestore";
 import { db } from "src/configs/firebaseConfig";
-import Switch from "@mui/material/Switch";
-import { Delete, Pencil } from "mdi-material-ui";
 import DeleteDailog from "src/views/dailogs/DeleteDailog";
 import AlertMessage from "src/views/Alert/AlertMessage";
 import UserForm from "src/views/forms/UserForm";
@@ -63,7 +62,7 @@ const UserTable = ({ children, loading, setLoading, type }) => {
   // function for delete Service details
   const handleDelete = async () => {
     // delete service
-    const deleteService = doc(db, "users", userId);
+    const deleteService = doc(db, "requests", userId);
     await deleteDoc(deleteService).then(() => {
       console.log(userId);
       setShowPop(false);
@@ -89,21 +88,6 @@ const UserTable = ({ children, loading, setLoading, type }) => {
     setBlockpop({
       open: false,
       blockid: "",
-    });
-    setLoading(true);
-  };
-
-  const title = children.some((item) => item.type !== "SP")
-    ? ""
-    : `${t("supplier.cash.on.delivery")}`;
-
-
-
-  const handleSwitch = async (id, value) => {
-    const newValue = !value;
-    const SupplierStatus = doc(db, "users", id);
-    await updateDoc(SupplierStatus, {
-      isAvailableCOD: newValue,
     });
     setLoading(true);
   };
@@ -155,19 +139,22 @@ const UserTable = ({ children, loading, setLoading, type }) => {
                   ?.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
                   .map((value) => (
                     <TableRow key={value.docid}>
-                      <TableCell>
-                        <img
-                          src={
-                            value.photo_url ? value.photo_url : value.License
-                          }
-                          height={50}
-                          width={50}
-                          style={{ borderRadius: "50px" }}
-                        />
-                      </TableCell>
-                      <TableCell align="center">{value.display_name}</TableCell>
-                      <TableCell align="center">{value.email}</TableCell>
-                      <TableCell align="center">{value.phone_number}</TableCell>
+                      <TableCell align="center">{value.guestName}</TableCell>
+                      <TableCell align="center">{value.guestRM}</TableCell>
+                      <TableCell align="center">{value.request}</TableCell>
+                      <TableCell align="center">{value.status}</TableCell>
+                      <TableCell align="center">{value.orderRes}</TableCell>
+                      <TableCell align="center">{value.department}</TableCell>
+                      <TableCell align="center" style={{padding:"0 10px"}}><Icon style={{overflow:"unset"}}>
+                          {value.guestCalled ? (
+                            <Badge badgeContent={value.followUp} color="primary">
+                            <Phone color="success" />
+                          </Badge>
+                          ) : (
+                            <Phone htmlColor="red" />
+                          )}
+                        </Icon></TableCell>
+                        
 
                       {/* <TableCell>
                         {value.type !== "SP" ? (

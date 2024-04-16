@@ -21,21 +21,19 @@ const Request = () => {
    const handleClose = () => {
     setOpen(false);
   };
-  // const filterData = (string = "") => {
-  //   getUsersByType("users", "User").then((allusers) => {
-  //     const filteredArray = allusers.filter((obj) =>
-  //       obj.display_name?.toLowerCase().match(string.toLowerCase())
-  //     );
-  //     setUsers(filteredArray);
-  //     setLoading(false);
-  //   });
-  // };
-
-  useEffect(() => {
+  const filterData = (string = "") => {
     getStaticData("requests").then((allfaqs) => {
-      setUsers(allfaqs);
+      const filteredArray = allfaqs.filter((obj) =>
+        obj.guestName?.toLowerCase().match(string.toLowerCase())
+      );
+      setUsers(filteredArray);
       setLoading(false);
     });
+  };
+
+ 
+  useEffect(() => {
+        filterData();
     }, [loading]);
 
   return (
@@ -84,7 +82,6 @@ const Request = () => {
       <UserForm
         open={open}
         handleClose={handleClose}
-        // articleId={articleId}
       />
       <UserTable children={users} loading={loading} setLoading={setLoading} />
     </>
