@@ -2,7 +2,7 @@ import { Grid, InputAdornment, TextField, Typography } from "@mui/material";
 import { AccountSearch } from "mdi-material-ui";
 import React, { useEffect, useState } from "react";
 import useTranslation from "src/@core/hooks/useTranslation";
-import { getUsersByType } from "src/@core/utils/firebaseutils";
+import { getStaticData } from "src/@core/utils/firebaseutils";
 import UserTable from "src/views/tables/UserTable";
 
 const Suppliers = () => {
@@ -12,7 +12,7 @@ const Suppliers = () => {
   const [loading, setLoading] = useState(true);
 
   const filterData = (string = "") => {
-    getUsersByType("users", "SP").then((allusers) => {
+    getStaticData("users").then((allusers) => {
       const filteredArray = allusers.filter((obj) =>
         obj.display_name?.toLowerCase().match(string.toLowerCase())
       );

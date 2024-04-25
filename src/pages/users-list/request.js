@@ -2,10 +2,14 @@ import { Grid, InputAdornment, TextField, Typography, Button } from "@mui/materi
 import { AccountSearch } from "mdi-material-ui";
 import React, { useEffect, useState } from "react";
 import useTranslation from "src/@core/hooks/useTranslation";
-import { getStaticData } from "src/@core/utils/firebaseutils";
-import UserTable from "src/views/tables/UserTable";
+import UserTable from "src/views/tables/RequestTable";
 import { Plus } from "mdi-material-ui";
-import UserForm from "src/views/forms/UserForm";
+import UserForm from "src/views/forms/RequestForm";
+import {
+  collection,
+  onSnapshot,
+} from "firebase/firestore";
+import { db} from "src/configs/firebaseConfig";
 
 const Request = () => {
   // ** State
@@ -13,7 +17,7 @@ const Request = () => {
   const [users, setUsers] = useState([]);
   const [loading, setLoading] = useState(true);
   const [open, setOpen] = useState(false);
-
+const [filterData, setFilterData] = useState("")
   const handleClickOpen = (_, ) => {
     setOpen(true);
   };
@@ -21,21 +25,23 @@ const Request = () => {
    const handleClose = () => {
     setOpen(false);
   };
-  const filterData = (string = "") => {
-    getStaticData("requests").then((allfaqs) => {
-      const filteredArray = allfaqs.filter((obj) =>
-        obj.guestName?.toLowerCase().match(string.toLowerCase())
+ 
+  useEffect(() => {
+    const Query = collection(db, "requests");
+    onSnapshot(Query, (snapshot) => {
+      const allfaqs = [];
+      snapshot.forEach((doc) => {
+        allfaqs.push({ docid: doc.id, ...doc.data() });
+      });
+      const filteredArray = allfaqs.filter(
+        (obj) => obj.guestName?.toLowerCase().match(filterData.toLowerCase())
       );
       setUsers(filteredArray);
       setLoading(false);
     });
-  };
-
- 
-  useEffect(() => {
-        filterData();
-    }, [loading]);
-
+  
+  }, [loading]); // Update dependency array to include 'string' instead of 'loading'
+  
   return (
     <>
       <Grid container spacing={6} justifyContent="space-between">

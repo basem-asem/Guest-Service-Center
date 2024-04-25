@@ -1,5 +1,7 @@
 import {
+  Badge,
   CircularProgress,
+  Icon,
   IconButton,
   Paper,
   Table,
@@ -10,17 +12,14 @@ import {
   TablePagination,
   TableRow,
 } from "@mui/material";
-import { AccountLock, AccountLockOpen, Eye } from "mdi-material-ui";
+import { AccountLock, AccountLockOpen, Eye, Phone, Delete, Pencil } from "mdi-material-ui";
 import React, { useEffect, useState } from "react";
 import Link from "next/link";
 import useTranslation from "src/@core/hooks/useTranslation";
 import { useRouter } from "next/router";
 import BlockDailog from "../dailogs/BlockDailog";
-import { Button } from "@mui/material";
 import { doc, updateDoc, deleteDoc } from "firebase/firestore";
 import { db } from "src/configs/firebaseConfig";
-import Switch from "@mui/material/Switch";
-import { Delete, Pencil } from "mdi-material-ui";
 import DeleteDailog from "src/views/dailogs/DeleteDailog";
 import AlertMessage from "src/views/Alert/AlertMessage";
 import UserForm from "src/views/forms/RequestForm";
@@ -55,10 +54,7 @@ const UserTable = ({ children, loading, setLoading, type }) => {
     setUserId("");
     setOpen(false);
   };
-// function for close delete popup
-const handlePopcloses = () => {
-  setShowPop(false);
-};
+
   const handlePopopen = (serviceid, id) => {
     setUserId(serviceid);
     setShowPop(true);
@@ -66,7 +62,7 @@ const handlePopcloses = () => {
   // function for delete Service details
   const handleDelete = async () => {
     // delete service
-    const deleteService = doc(db, "users", userId);
+    const deleteService = doc(db, "requests", userId);
     await deleteDoc(deleteService).then(() => {
       console.log(userId);
       setShowPop(false);
@@ -96,21 +92,6 @@ const handlePopcloses = () => {
     setLoading(true);
   };
 
-  const title = children.some((item) => item.type !== "SP")
-    ? ""
-    : `${t("supplier.cash.on.delivery")}`;
-
-
-
-  const handleSwitch = async (id, value) => {
-    const newValue = !value;
-    const SupplierStatus = doc(db, "users", id);
-    await updateDoc(SupplierStatus, {
-      isAvailableCOD: newValue,
-    });
-    setLoading(true);
-  };
-
   useEffect(() => {
     setUserId("")
   }, [children]);
@@ -122,11 +103,13 @@ const handlePopcloses = () => {
           <Table sx={{ minWidth: 650 }} aria-label="simple table">
             <TableHead>
               <TableRow>
-                <TableCell>{t("user-detail.table.image")}</TableCell>
-                <TableCell align="center">{t("user-detail.table.name")}</TableCell>
-                <TableCell align="center">{t("user-detail.table.email")}</TableCell>
-                <TableCell align="center">{t("user-detail.table.phone")}</TableCell>
-                {/* <TableCell>{t("supplier.cash.on.delivery")}</TableCell> */}
+                <TableCell align="center">{t("request.guestName")}</TableCell>
+                <TableCell align="center">{t("request.guestRM")}</TableCell>
+                <TableCell align="center">{t("request.request")}</TableCell>
+                <TableCell align="center">{t("request.status")}</TableCell>
+                <TableCell align="center">{t("request.orderRes")}</TableCell>
+                <TableCell align="center">{t("request.department")}</TableCell>
+                <TableCell align="center">{t("request.guestCalled")}</TableCell>
                 <TableCell align="center">{t("table.action")}</TableCell>
               </TableRow>
             </TableHead>
@@ -137,7 +120,7 @@ const handlePopcloses = () => {
                     component="th"
                     scope="row"
                     align="center"
-                    colSpan={5}
+                    colSpan={8}
                   >
                     <CircularProgress />
                   </TableCell>
@@ -158,19 +141,22 @@ const handlePopcloses = () => {
                   ?.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
                   .map((value) => (
                     <TableRow key={value.docid}>
-                      <TableCell>
-                        <img
-                          src={
-                            value.photo_url ? value.photo_url : value.License
-                          }
-                          height={50}
-                          width={50}
-                          style={{ borderRadius: "50px" }}
-                        />
-                      </TableCell>
-                      <TableCell align="center">{value.display_name}</TableCell>
-                      <TableCell align="center">{value.email}</TableCell>
-                      <TableCell align="center">{value.phone_number}</TableCell>
+                      <TableCell align="center">{value.guestName}</TableCell>
+                      <TableCell align="center">{value.guestRM}</TableCell>
+                      <TableCell align="center">{value.request}</TableCell>
+                      <TableCell align="center">{value.status}</TableCell>
+                      <TableCell align="center">{value.orderRes}</TableCell>
+                      <TableCell align="center">{value.department}</TableCell>
+                      <TableCell align="center" style={{padding:"0 10px"}}><Icon style={{overflow:"unset"}}>
+                          {value.guestCalled ? (
+                            <Badge badgeContent={value.followUp} color="primary">
+                            <Phone color="success" />
+                          </Badge>
+                          ) : (
+                            <Phone htmlColor="red" />
+                          )}
+                        </Icon></TableCell>
+                        
 
                       {/* <TableCell>
                         {value.type !== "SP" ? (
@@ -197,7 +183,7 @@ const handlePopcloses = () => {
                             <Eye color="info" />
                           </Link>
                         </IconButton>
-                        <IconButton
+                        {/* <IconButton
                           onClick={() => {
                             setBlockpop({
                               open: true,
@@ -211,7 +197,7 @@ const handlePopcloses = () => {
                           ) : (
                             <AccountLockOpen color="success" />
                           )}
-                        </IconButton>
+                        </IconButton> */}
                         <IconButton
                 onClick={(e) => {
                   handleClickOpen(e, value.docid);
@@ -257,7 +243,7 @@ const handlePopcloses = () => {
       <DeleteDailog
         handleDelete={handleDelete}
         showPop={showPop}
-        handlePopclose={handlePopcloses}
+        handlePopclose={handlePopclose}
       />
       <AlertMessage setAlertpop={setAlertpop} Alertpop={Alertpop} />
       <UserForm

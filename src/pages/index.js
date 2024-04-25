@@ -91,12 +91,10 @@ const LoginPage = () => {
           .then(async (userresult) => {
             const userdocRef = doc(db, "users", userresult.user.uid);
             const userdocSnap = await getDoc(userdocRef);
-            console.log(userdocSnap.data())
-
             if (userdocSnap.exists()) {
               const { Role } = userdocSnap.data();
-              console.log(Role)
-              if (Role === "Admin") {
+              if (Role == "Admin") {
+                console.log("Sucseess")
                 setMessagetype("success");
                 setErrorMessage(t("login.success"));
                 setErrorAlert(true);
@@ -113,6 +111,7 @@ const LoginPage = () => {
                 setInLogin(false);
                 setErrorMessage(t("login.invalid"));
                 setErrorAlert(true);
+                auth.signOut()
               }
             } else {
               setInLogin(false);
@@ -125,14 +124,14 @@ const LoginPage = () => {
             setErrorMessage(t("login.invalid"));
             setErrorAlert(true);
           });
-      } else {
-        setInLogin(false);
-        setErrorMessage(t("login.noInputerror"));
-        setErrorAlert(true);
-      }
-    },
-  });
-
+        } else {
+          setInLogin(false);
+          setErrorMessage(t("login.noInputerror"));
+          setErrorAlert(true);
+        }
+      },
+    });
+    
   useEffect(() => {
     const dir = router?.locale == "ar" ? "rtl" : "ltr";
     const lang = router?.locale == "ar" ? "ar" : "en";

@@ -7,42 +7,48 @@ import {
   Dialog,
   Grid,
   TextField,
-  Typography,Menu,Fade,FormControl, InputLabel
+  Typography,Menu,Fade
 } from "@mui/material";
+import InputLabel from '@mui/material/InputLabel';
+import OutlinedInput from '@mui/material/OutlinedInput';
+import FormControl from '@mui/material/FormControl';
 import { deleteDoc, doc, getDoc } from "firebase/firestore";
 import { useEffect, useState } from "react";
 import useTranslation from "src/@core/hooks/useTranslation";
 import {
   Create_Update_Doc,
   imageUploading,
+  createFirebaseAccountAndDocument,
 } from "src/@core/utils/firebaseutils";
+import { useTheme } from '@mui/material/styles';
 import { db } from "src/configs/firebaseConfig";
 import AlertMessage from "../Alert/AlertMessage";
 import Select from "@mui/material/Select";
 import MenuItem from "@mui/material/MenuItem";
-import { BorderAll, BorderColor } from "mdi-material-ui";
+import Chip from '@mui/material/Chip';
+import Box from '@mui/material/Box';
+
 
 const Serviceform = (props) => {
   // ** States
-  const [guestName, setguestName] = useState('');
-  const [guestRM, setguestRM] = useState('');
-  const [orderTaker, setorderTaker] = useState('');
-  const [request, setrequest] = useState('');
-  const [orderRes, setorderRes] = useState('');
+  const [serviceName, setserviceName] = useState("");
+  const [serviceNameAR, setserviceNameAR] = useState("");
+  const [password, setPassword] = useState("");
+  const [phoneNumber, setPhoneNumber] = useState("");
+  const [city, setCity] = useState("");
+  const [address, setAddress] = useState("");
+  const [type, setType] = useState("");
   const [department, setdepartment] = useState('');
-  const [status, setStatus] = useState('');
-  const [requestDoneTime, setRequestDoneTime] = useState('');
-  const [responseTime, setResponseTime] = useState('');
-  const [guestCalled, setguestCalled] = useState(false);
-  const [followUp, setfollowUp] = useState("");
+  const [imageAsFile, setImageAsFile] = useState("");
+  const [isLoading, setIsLoading] = useState(false);
+  const [file, setFile] = useState("");
+  const [open, setOpen] = useState(false);
+  const [typeOpen, setTypeOpen] = useState(false);
   const departmentType = ["House keeping", "Engineering", "Room Service", "Security", "General"];
 
-  // const [imageAsFile, setImageAsFile] = useState("");
-  const [isLoading, setIsLoading] = useState(false);
-  // const [file, setFile] = useState();
-  const [open, setOpen] = useState(false);
 
-  const [anchorEl, setAnchorEl] = useState(null);
+
+
   const handleClick = (event) => {
     setdepartment(event.currentTarget);
   };
@@ -67,91 +73,97 @@ const Serviceform = (props) => {
     e.preventDefault();
     setIsLoading(true);
 
-    guestName = guestName.trim();
-    orderTaker = orderTaker.trim();
-    request = request.trim();
-    orderRes = orderRes.trim();
-    department = department.trim();
-
-    if (!guestName) {
+    if (!serviceName || !serviceNameAR || !city || !address || !password|| !phoneNumber ) {
       setIsLoading(false);
       setErrorMessage({
         nameerror: t("forms.errormessage.inputText"),
+        emailerror: t("forms.errormessage.inputText"),
+        cityerror: t("forms.errormessage.inputText"),
+        addresserror: t("forms.errormessage.inputText"),
+        passworderror: t("forms.errormessage.inputText"),
+        phoneerror: t("forms.errormessage.inputText"),
       });
-    // } else if (!imageAsFile && !file) {
-    //   setIsLoading(false);
-    //   setErrorMessage({
-    //     imageerror: t("forms.errormessage.inputfile"),
-    //   });
-    }else if (!guestRM) {
+    }else if (!imageAsFile && !file) {
       setIsLoading(false);
       setErrorMessage({
-        nameerror: t("forms.errormessage.inputText"),
+        imageerror: t("forms.errormessage.inputfile"),
       });
-    } else {
-      // imageUploading("photo_url", imageAsFile).then((firebase_url) => {
-      //   if (imageAsFile) {
-      //     file = firebase_url;
-      //   }
-
-        Create_Update_Doc(
-          "requests",
-          { guestName: guestName, guestRM: guestRM, orderTaker: orderTaker, department: department, request: request, orderRes: orderRes, created_At: new Date(), status: status ,requestDoneTime: requestDoneTime , responseTime:responseTime ,guestCalled:guestCalled , followUp:followUp },
-          props.CategoriesId
-        ).then((action_message) => {
+    }else {
+      const userObject = {
+        display_name: serviceName,
+        email: serviceNameAR,
+        photo_url: file,
+        Role: type,
+        department:department,
+        phone_number:phoneNumber,
+        city: city,
+        address: address,
+        password:password,
+      };
+      if(!props.CategoriesId){
+        createFirebaseAccountAndDocument(userObject).then((action_message) => {
           props.handleClose();
-
-          // Insert Alert
+          setAlertpop({
+            open: true,
+            message: t(action_message),
+          });
+        })
+      }
+      imageUploading("photo_url", imageAsFile).then((firebase_url) => {
+        if (imageAsFile) {
+          userObject.photo_url = firebase_url;
+        }
+  
+        Create_Update_Doc("users", userObject, props.CategoriesId).then((action_message) => {
+          props.handleClose();
           setAlertpop({
             open: true,
             message: t(action_message),
           });
         });
-      };
-    };
+      });
+    }
+  };
+  const handleDelete = async () => {
+    await deleteDoc(doc(db, "users", props.CategoriesId)).then(() => {
+      props.handleClose();
 
-  // const handleDelete = async () => {
-  //   await deleteDoc(doc(db, "users", props.CategoriesId)).then(() => {
-  //     props.handleClose();
-
-  //     // Delete Alert
-  //     setAlertpop({
-  //       open: true,
-  //       message: t("data.delete"),
-  //     });
-  //   });
-  // };
+      // Delete Alert
+      setAlertpop({
+        open: true,
+        message: t("data.delete"),
+      });
+    });
+  };
 
   useEffect(() => {
     setErrorMessage("");
-    setguestName("");
-    setguestRM("");
+    setserviceName("");
+    setserviceNameAR("");
+    setPassword("");
+    setType("");
+    setAddress("");
     setdepartment("");
-    setorderRes("");
-    setrequest("");
-    setorderTaker("");
-    // setImageAsFile("");
-    // setFile("");
+    setCity("");
+    setPhoneNumber("");
+    setImageAsFile("");
+    setFile("");
     setIsLoading(false);
 
     const fetchserviceDetail = async () => {
-      const docRef = doc(db, "requests", props.CategoriesId);
+      const docRef = doc(db, "users", props.CategoriesId);
       const docSnap = await getDoc(docRef);
       if (docSnap.exists()) {
         const data = docSnap.data();
-        setguestName(data.guestName);
-        setguestRM(data.guestRM);
-        setdepartment(data.department);
-        setorderRes(data.orderRes);
-        setrequest(data.request);
-        setorderTaker(data.orderTaker);
-        setfollowUp(data.followUp);
-        setguestCalled(data.guestCalled);
-        setResponseTime(data.responseTime);
-        setRequestDoneTime(data.requestDoneTime);        
-        setStatus(data.status);
-
-        // setFile(data.photo_url);
+        setserviceName(data.display_name);
+        setPassword(data.password);
+        setserviceNameAR(data.email);
+        setType(data.Role);
+        setAddress(data.address);
+        setCity(data.city);
+        setPhoneNumber(data.phone_number);
+        setFile(data.photo_url);
+        setdepartment(data.department)
       }
     };
 
@@ -159,17 +171,14 @@ const Serviceform = (props) => {
       fetchserviceDetail();
     }
   }, [props.open]);
-console.log(department)
+  console.log(type)
+
   return (
     <>
-      <Dialog open={props.open}  maxWidth={"lg"}>
-        <Card style={{ overflowY:"auto"}}>
+      <Dialog open={props.open}>
+        <Card style={{overflowY:"auto"}}>
           <CardHeader
-            title={
-              props.CategoriesId
-                ? t("request.page.form.edit.request")
-                : t("request.page.form.add.request")
-            }
+            title={props.CategoriesId ? t("category.page.form.edit.Category"): t("employee.form.addBtn")}
             titleTypographyProps={{ variant: "h6" }}
           />
           <CardContent>
@@ -178,151 +187,124 @@ console.log(department)
                 <Grid item xs={12}>
                 <TextField
                     fullWidth
-                    label={t("request.guestName")}
-                    value={guestName}
+                    label={t("user-detail.table.name")}
+                    value={serviceName}
                     style={{ marginBottom: "15px" }}
                     helperText={
                       errorMessage.nameerror ? errorMessage.nameerror : ""
                     }
                     error={errorMessage.nameerror ? true : false}
                     onChange={(e) => {
-                      setguestName(e.target.value);
-                    }}
-                  />
-                  <TextField
-                    fullWidth
-                    label={t("request.guestRM")}
-                    value={guestRM}
-                    style={{ marginBottom: "15px" }}
-                    helperText={
-                      errorMessage.nameerror ? errorMessage.nameerror : ""
-                    }
-                    error={errorMessage.nameerror ? true : false}
-                    onChange={(e) => {
-                      setguestRM(e.target.value);
+                      setserviceName(e.target.value);
                     }}
                   />
                   <TextField
                   fullWidth
-                  label={t("request.orderRes")}
-                  value={orderRes}
+                  label={t("user-detail.table.email")}
+                  value={serviceNameAR}
+                  style={{ marginBottom: "15px" }}
+                  helperText={
+                    errorMessage.emailerror ? errorMessage.emailerror : ""
+                  }
+                  error={errorMessage.emailerror ? true : false}
+                  onChange={(e) => {
+                    setserviceNameAR(e.target.value);
+                  }}
+                  />
+                <TextField
+                  fullWidth
+                  type="password"
+                  label={t("user-detail.table.password")}
+                  value={password}
                   style={{ marginBottom: "15px" }}
                   helperText={
                     errorMessage.nameerror ? errorMessage.nameerror : ""
                   }
                   error={errorMessage.nameerror ? true : false}
                   onChange={(e) => {
-                    setorderRes(e.target.value);
+                    setPassword(e.target.value);
                   }}
                 />
+                <FormControl sx={{ m: 1, width: 200 }} xs={12}>
+                  <InputLabel id="demo-name-label">{t("user-detail.table.type")}</InputLabel>
+                  <Select
+                    open={typeOpen}
+                    style={{ marginBottom: "15px" }}
+                    onClose={() => setTypeOpen(false)}
+                    onOpen={() => setTypeOpen(true)}
+                    value={props.type? props.type: type}
+                    label={t("user-detail.table.type")}
+                    id="demo-name-label"
+                    helperText={
+                      errorMessage.nameerror ? errorMessage.nameerror : ""
+                    }
+                    error={errorMessage.nameerror ? true : false}
+                    onChange={(e) => setType(e.target.value)}
+                    >
+                    <MenuItem onClick={() => setTypeOpen(false)} value="Admin">Admin</MenuItem>
+                    <MenuItem onClick={() => setTypeOpen(false)} value="Employee">Employee</MenuItem>
+                  </Select>
+                </FormControl>
+                {type==="employee" && <FormControl sx={{ m: 1, width: 200 }} xs={12}>
+                <InputLabel id="demo-controlled-open-select-label">
+                      {t("request.department")}
+                    </InputLabel>
              <Select
-                open={open}
-                style={{ margin: "15px 0" }}
-                onClose={() => setOpen(false)}
-                onOpen={() => setOpen(true)}
-                value={department}
-                label={t("request.department")}
+             labelId="demo-controlled-open-select-label"
+             id="demo-controlled-open-select"
+             open={open}
+             style={{ marginBottom: "15px" }}
+             onClose={() => setOpen(false)}
+             onOpen={() => setOpen(true)}
+             value={department}
+             label={t("request.department")}
+             helperText={
+              errorMessage.nameerror ? errorMessage.nameerror : ""
+            }
+            error={errorMessage.nameerror ? true : false}
                 onChange={(e) => setdepartment(e.target.value)} // Update department state
-              >
+                >
                 {departmentType.map((e, i) => (
-                  <MenuItem onClick={()=>handleClick(e)}value={e} key={i}>
+                  <MenuItem onClick={()=>handleClick(e)} value={e} key={i}>
                     {e}
                   </MenuItem>
                 ))}
               </Select>
-                  {/* <Select
-                    open={open}
-                    style={{ margin: "15px", }}
-                    onClose={() => setOpen(false)}
-                    onOpen={() => setOpen(true)}
-                    value={request}
-                    label={t("request.request")}
-                    onChange={(e) => setrequest(e.target.value)}
-                  >
-                    {departmentType.map((e, i) => (
-                      <MenuItem onClick={handleClose} value={e} key={i}>
-                        {e}
-                      </MenuItem>
-                    ))}
-                  </Select> */}
-              <TextField
-              fullWidth
-              inputProps={{ inputMode: "numeric", pattern: "[0-9]*" }}
-              type="number"
-              label={t("request.followUp")}
-              value={followUp}
-              style={{ marginBottom: "15px" }}
-              helperText={
-                errorMessage.nameerror ? errorMessage.nameerror : ""
-              }
-              error={errorMessage.nameerror ? true : false}
-              onChange={(e) => {
-                setfollowUp(e.target.value);
-              }}
-            />
-            {/* <Select
-              open={open}
-              style={{ margin: "15px", }}
-              onClose={() => setOpen(false)}
-              onOpen={() => setOpen(true)}
-              value={status}
-              label={t("request.status")}
-              onChange={(e) => setStatus(e.target.value)}
-            >
-              {departmentType.map((e, i) => (
-                <MenuItem onClick={handleClose} value={e} key={i}>
-                  {e}
-                </MenuItem>
-              ))}
-            </Select> */}
-            <TextField
-            fullWidth
-            label={t("user-detail.table.request")}
-            value={request}
-            style={{ marginBottom: "15px" }}
-            helperText={
-              errorMessage.nameerror ? errorMessage.nameerror : ""
-            }
-            error={errorMessage.nameerror ? true : false}
-            onChange={(e) => {
-              setrequest(e.target.value);
-            }}
-          />
-          <TextField
-          fullWidth
-          label={t("user-detail.table.phone")}
-          value={orderTaker}
-          style={{ marginBottom: "15px" }}
-          helperText={
-            errorMessage.nameerror ? errorMessage.nameerror : ""
-          }
-          error={errorMessage.nameerror ? true : false}
-          onChange={(e) => {
-            setorderTaker(e.target.value);
-          }}
-        />
-        <Grid item sm={6} xs={12}>
-                  <FormControl fullWidth>
-                    <InputLabel id="demo-controlled-open-select-label">
-                      {t("request.guestCalled")}
-                    </InputLabel>
-                    {/* <Select
-                      labelId="demo-controlled-open-select-label"
-                      id="demo-controlled-open-select"
-                      open={open}
-                      onClose={() => setOpen(false)}
-                      onOpen={() => setOpen(true)}
-                      value={guestCalled}
-                      label={t("request.guestCalled")}
-                      onChange={(e) => setguestCalled(e.target.value)}
-                    >
-                      <MenuItem value={false}>{t("request.no")}</MenuItem>
-                      <MenuItem value={true}>{t("request.yes")}</MenuItem>
-                    </Select> */}
-                  </FormControl>
+                </FormControl>}
+      <TextField
+        fullWidth
+        label={t("user-detail.table.address")}
+        value={address}
+        style={{ marginBottom: "15px" }}
+        helperText={
+          errorMessage.nameerror ? errorMessage.nameerror : ""
+        }
+        error={errorMessage.nameerror ? true : false}
+        onChange={(e) => setAddress(e.target.value)}
+      />
+      <TextField
+        fullWidth
+        label={t("user-detail.table.city")}
+        value={city}
+        style={{ marginBottom: "15px" }}
+        helperText={
+          errorMessage.nameerror ? errorMessage.nameerror : ""
+        }
+        error={errorMessage.nameerror ? true : false}
+        onChange={(e) => setCity(e.target.value)}
+      />
+      <TextField
+        fullWidth
+        label={t("user-detail.table.phone")}
+        value={phoneNumber}
+        helperText={
+          errorMessage.nameerror ? errorMessage.nameerror : ""
+        }
+        error={errorMessage.nameerror ? true : false}
+        onChange={(e) => setPhoneNumber(e.target.value)}
+      />
                 </Grid>
-                </Grid>
-                {/* <Grid item xs={12} display="flex" gap="1rem">
+                <Grid item xs={12} display="flex" gap="1rem">
                   <Button variant="contained" component="label">
                     {t("form.lables.Choose File")}
                     <input
@@ -338,8 +320,8 @@ console.log(department)
                   <Typography variant="body2" color="red" alignSelf="center">
                     {errorMessage.imageerror ? errorMessage.imageerror : ""}
                   </Typography>
-                </Grid> */}
-                {/* {file ? (
+                </Grid>
+                {file ? (
                   <Grid item xs={12} textAlign="center">
                     <img
                       src={file}
@@ -350,7 +332,7 @@ console.log(department)
                   </Grid>
                 ) : (
                   ""
-                )} */}
+                )}
                 <Grid item xs={12}>
                   {isLoading ? (
                     <Button size="large" sx={{ marginRight: 4 }}>
@@ -374,9 +356,9 @@ console.log(department)
                     size="large"
                     onClick={() => {
                       setErrorMessage("");
-                      setguestName("");
-                      // setImageAsFile("");
-                      // setFile("");
+                      setserviceName("");
+                      setImageAsFile("");
+                      setFile("");
                       setIsLoading(false);
                       props.handleClose();
                     }}

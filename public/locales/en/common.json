@@ -28,7 +28,7 @@
 
     "navbar.Dashboard": "Dashboard",
     "navbar.Users":"Request",
-    "navbar.Supplier":"Supplier",
+    "navbar.employee":"Manage Employee",
     "navbar.Hotels Category":"Hotels Category",
     "navbar.Subscription Package":"Subscription Package",
     "navbar.Manage Coupons": "Manage Coupons",
@@ -41,6 +41,7 @@
     "navbar.Languages": "Languages",
     "subnavbar.User Interface": "User Interface",
     "subnavbar.Information": "Information",
+    "search.name": "Search by Name",
 
     "dashboard.Total Users": "Total Users",
     "dashboard.Total Supplier": "Total Supplier",
@@ -111,5 +112,20 @@
     "request.status":"Status",
     "request.orderRes":"Assigned To",
     "request.department":"Department",
-    "request.guestCalled":"Guest Called"
+    "request.guestCalled":"Guest Called",
+    "request.no":"No",
+    "request.yes":"Yes",
+    "request.orderTaker":"Order Taker Name",
+    "request.followUp":"Follow up call",
+    "category.page.form.edit.Category": "Edit User",
+    "employee.form.addBtn": "Add Employee",
+  "user-detail.table.image": "IMAGE",
+  "user-detail.table.name": "Name",
+  "user-detail.table.type": "Change Type",
+  "user-detail.table.email": "Email",
+  "user-detail.table.phone": "Phone",
+  "user-detail.table.address": "Address",
+  "user-detail.table.city": "City",
+  "user-detail.table.department": "Department",
+  "user-detail.table.password": "Password"
 }

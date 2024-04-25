@@ -12,8 +12,9 @@ import {
   PostOutline,
   TicketPercentOutline,
   Translate,
-  ViewDashboardOutline,
+  ViewDashboardOutline
 } from "mdi-material-ui";
+// import EngineeringIcon from "@mui/icons-material/Engineering";
 import useTranslation from "src/@core/hooks/useTranslation";
 
 const navigation = () => {
@@ -29,20 +30,25 @@ const navigation = () => {
       sectionTitle: t("subnavbar.User Interface"),
     },
     {
-      icon: AccountGroupOutline,
+      icon: PostOutline,
       title: t("navbar.Users"),
       path: "/users-list/request",
     },
     {
+      title: t("navbar.employee"),
       icon: AccountSupervisorCircleOutline,
-      title: t("navbar.Supplier"),
-      path: "/users-list/suppliers",
+      path: "/Admins",
     },
     {
       icon: ViewDashboardOutline,
       title: t("navbar.Hotels Category"),
       path: "/categories",
     },
+    // {
+    //   icon: AccountSupervisorCircleOutline,
+    //   title: t("navbar.Supplier"),
+    //   path: "/users-list/suppliers",
+    // },
     // {
     //   icon: GiftOutline,
     //   title: t("navbar.Subscription Package"),
