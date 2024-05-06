@@ -11,16 +11,16 @@ const SplashScreen = ({ finishLoading }) => {
       complete: () => finishLoading(),
     });
 
-  //   loader.add({
-  //     targets: "#splashLogo",
-  //     scale: {
-  //       value: 1.5,
-  //       duration: 1600,
-  //       delay: 800,
-  //       easing: "easeInOutQuart",
-  //     },
-  //     delay: 250, // All properties except 'scale' inherit 250ms delay
-  //   });
+    loader.add({
+      targets: "#splashLogo",
+      scale: {
+        value: 1.5,
+        duration: 1600,
+        delay: 800,
+        easing: "easeInOutQuart",
+      },
+      delay: 250, // All properties except 'scale' inherit 250ms delay
+    });
   };
 
   useEffect(() => {
