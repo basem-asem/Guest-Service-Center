@@ -109,6 +109,7 @@
     "request.guestName":"Guest Name",
     "request.guestRM":"Guest Room",
     "request.request":"Request",
+    "request.date":"Date",
     "request.status":"Status",
     "request.orderRes":"Assigned To",
     "request.department":"Department",

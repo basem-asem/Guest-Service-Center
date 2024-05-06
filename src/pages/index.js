@@ -94,7 +94,6 @@ const LoginPage = () => {
             if (userdocSnap.exists()) {
               const { Role } = userdocSnap.data();
               if (Role == "Admin") {
-                console.log("Sucseess")
                 setMessagetype("success");
                 setErrorMessage(t("login.success"));
                 setErrorAlert(true);

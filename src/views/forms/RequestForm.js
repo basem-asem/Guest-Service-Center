@@ -19,12 +19,12 @@ import {
 import { db } from "src/configs/firebaseConfig";
 import AlertMessage from "../Alert/AlertMessage";
 import { BorderAll, BorderColor } from "mdi-material-ui";
+import Cookies from "js-cookie";
 
 const RequestForm = (props) => {
   // ** States
   const [guestName, setguestName] = useState('');
   const [guestRM, setguestRM] = useState('');
-  const [orderTaker, setorderTaker] = useState('');
   const [request, setrequest] = useState('');
   const [department, setdepartment] = useState();
   const [status, setStatus] = useState('');
@@ -34,7 +34,7 @@ const RequestForm = (props) => {
   const [followUp, setfollowUp] = useState(0);
   const departmentType = ["House keeping", "Engineering", "Room Service", "Security", "General"];
   const statusType = ["Pending","Work on it", "Completed"];
-
+const orderTakerId = Cookies.get("_isAdmin");
   // const [imageAsFile, setImageAsFile] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   // const [file, setFile] = useState();
@@ -71,7 +71,6 @@ const RequestForm = (props) => {
     setIsLoading(true);
 
     guestName = guestName.trim();
-    orderTaker = orderTaker.trim();
     request = request.trim();
     department = department.trim();
     !props.CategoriesId?status="Pending":status=status
@@ -98,7 +97,7 @@ const RequestForm = (props) => {
 
         Create_Update_Doc(
           "requests",
-          { guestName: guestName, guestRM: guestRM, orderTaker: orderTaker, department: department, request: request, orderRes: selectedUser, created_At: new Date(), status:!props.CategoriesId?"Pending":status
+          { guestName: guestName, guestRM: guestRM, orderTaker: orderTakerId, department: department, request: request, orderRes: selectedUser, created_At: new Date(), status:!props.CategoriesId?"Pending":status
           ,requestDoneTime: requestDoneTime , responseTime:responseTime ,guestCalled:guestCalled , followUp:followUp },
           props.CategoriesId
         ).then((action_message) => {
@@ -131,7 +130,6 @@ const RequestForm = (props) => {
     setguestRM("");
     setdepartment("");
     setrequest("");
-    setorderTaker("");
     // setImageAsFile("");
     // setFile("");
     setIsLoading(false);        
@@ -150,7 +148,6 @@ const RequestForm = (props) => {
         setguestRM(data.guestRM);
         setdepartment(data.department);
         setrequest(data.request);
-        setorderTaker(data.orderTaker);
         setfollowUp(data.followUp);
         setguestCalled(data.guestCalled);
         setResponseTime(data.responseTime);
@@ -291,19 +288,6 @@ const RequestForm = (props) => {
               setrequest(e.target.value);
             }}
           />
-          <TextField
-          fullWidth
-          label={t("request.orderTaker")}
-          value={orderTaker}
-          style={{ marginBottom: "15px" }}
-          helperText={
-            errorMessage.nameerror ? errorMessage.nameerror : ""
-          }
-          error={errorMessage.nameerror ? true : false}
-          onChange={(e) => {
-            setorderTaker(e.target.value);
-          }}
-        />
          <Grid container spacing={2}>
       <Grid item sm={6} xs={12} style={{ marginBottom: "15px" }}>
         <FormControl fullWidth>

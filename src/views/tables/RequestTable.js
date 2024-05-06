@@ -11,6 +11,7 @@ import {
   TableHead,
   TablePagination,
   TableRow,
+  Chip
 } from "@mui/material";
 import { AccountLock, AccountLockOpen, Eye, Phone, Delete, Pencil } from "mdi-material-ui";
 import React, { useEffect, useState } from "react";
@@ -32,6 +33,7 @@ const UserTable = ({ children, loading, setLoading, type }) => {
   const [userId, setUserId] = useState("");
   const [open, setOpen] = useState(false);
   const [showPop, setShowPop] = useState(false);
+  const router = useRouter();
   const [Alertpop, setAlertpop] = useState({
     open: false,
     message: "",
@@ -42,6 +44,14 @@ const UserTable = ({ children, loading, setLoading, type }) => {
     blockid: "",
     isblock: "",
   });
+
+  const statusObj = {
+    Accepted: { color: "info" },
+    Cancelled: { color: "error" },
+    Pending: { color: "warning" },
+    Completed: { color: "success" },
+  };
+
   const { t } = useTranslation();
   const [rowsPerPage, setRowsPerPage] = useState(10);
   const [page, setPage] = useState(0);
@@ -144,7 +154,18 @@ const UserTable = ({ children, loading, setLoading, type }) => {
                       <TableCell align="center">{value.guestName}</TableCell>
                       <TableCell align="center">{value.guestRM}</TableCell>
                       <TableCell align="center">{value.request}</TableCell>
-                      <TableCell align="center">{value.status}</TableCell>
+                      <TableCell align="center">
+                      <Chip
+                          label={router.locale == "en"? value?.status: value?.status.replaceAll('Pending', 'معلق').replaceAll('Accepted', 'مقبولة').replaceAll('On its way', 'في الطريق اليك').replaceAll('Delivered', 'تم التوصيل').replaceAll('Completed', 'اكتمل').replaceAll('Canceled', 'ملغاة')}
+                          color={statusObj[value && value?.status]?.color}
+                          sx={{
+                            height: 24,
+                            fontSize: "0.75rem",
+                            textTransform: "capitalize",
+                            "& .MuiChip-label": { fontWeight: 500 },
+                          }}
+                        />
+                      </TableCell>
                       <TableCell align="center">{value.orderRes}</TableCell>
                       <TableCell align="center">{value.department}</TableCell>
                       <TableCell align="center" style={{padding:"0 10px"}}><Icon style={{overflow:"unset"}}>

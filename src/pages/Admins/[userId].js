@@ -26,7 +26,7 @@ function userId() {
   const [userOrderData, setUserOrderData] = useState([]);
   const { t } = useTranslation(router?.locale);
 
-  const userOrderRef = collection(db, "Orders");
+  const userOrderRef = collection(db, "requests");
 
   const fetchData = async () => {
     const usersCollectionRef = doc(db, "users", userId);
@@ -42,7 +42,7 @@ function userId() {
       console.log("No such document!");
       setIsLoading(false);
     }
-    const data = query(userOrderRef, where("customer", "==", usersCollectionRef));
+    const data = query(userOrderRef, where("orderRes", "==", userId));
     onSnapshot(data, (querySnapshot) => {
       const productOrderarr = [];
       querySnapshot.docs.map(async (doc) => {
@@ -87,18 +87,18 @@ function userId() {
                 </Grid>
                 <Grid item xs={12} sm={9}>
                   <Typography variant="body1" sx={{ marginTop: 3 }}>
-                  {t("user.name")} : {User.display_name ? User.display_name : "Not Found"}
+                  {t("user-detail.table.name")} : {User.display_name ? User.display_name : "Not Found"}
                   </Typography>
                   <Typography variant="body1" sx={{ marginTop: 3 }}>
-                  {t("user.email")} : {User.email ? User.email : "Not Found"}
+                  {t("user-detail.table.email")} : {User.email ? User.email : "Not Found"}
                   </Typography>
                   <Typography variant="body1" sx={{ marginTop: 3 }}>
-                  {t("user.phone")} :{" "}
+                  {t("user-detail.table.phone")} :{" "}
                     {User.phone_number ? User.phone_number : "Not Found"}
                   </Typography>
-                  {/* <Typography variant="body1" sx={{ marginTop: 3 }}>
-                    {t("user.address")} : {User.address ? User.address : "Not Found"}
-                  </Typography> */}
+                  <Typography variant="body1" sx={{ marginTop: 3 }}>
+                    {t("request.department")} : {User.department ? User.department : "Not Found"}
+                  </Typography>
                   {/* <Typography variant="body1" sx={{ marginTop: 3 }}>
                     {t("user.whatsapp")} : {User.whatsapp_number ? User.whatsapp_number : "Not Found"}
                   </Typography> */}

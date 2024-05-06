@@ -233,13 +233,10 @@ function user() {
                           {item.display_name}
                         </TableCell>
                         <TableCell align="center">{item.email}</TableCell>
-                        {item.department ? <TableCell align="center">{item.department}</TableCell>:<TableCell align="center"><Typography variant="contained" style={{backgroundColor:"#a5a8fc", color:"white", padding:"5px", borderRadius:"4px"}}>
-                              Admin
-                            </Typography>
-                            </TableCell>}
+                        <TableCell align="center">{item.Role=="Admin" ? <Typography variant="contained" style={{backgroundColor:"#a5a8fc", color:"white", padding:"5px", borderRadius:"4px"}}>Admin</Typography>:item.department}</TableCell>
                         <TableCell align="center">{item.phone_number}</TableCell>
                         <TableCell align="center">
-                          <Button>
+                          {item.Role == "Employee" && <Button>
                             <Link
                               href={{
                                 pathname: `Admins/${item.id}`,
@@ -248,7 +245,7 @@ function user() {
                             >
                               <Eye titleAccess="View User" htmlColor="blue" />
                             </Link>
-                          </Button>
+                          </Button>}
                           {/* <Button
                             onClick={() => {
                               setBlockpop({

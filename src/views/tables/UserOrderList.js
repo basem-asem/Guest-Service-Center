@@ -43,7 +43,7 @@ function UserOrderList(props) {
   return (
     <div>
       <CardHeader
-        title={t("user.userorder.title")}
+        title={t("navbar.Users")}
         titleTypographyProps={{ variant: "h6", align: "center" }}
       />
       <Paper sx={{ width: "100%", overflow: "hidden" }}>
@@ -51,11 +51,12 @@ function UserOrderList(props) {
           <Table stickyHeader aria-label="sticky table">
             <TableHead>
               <TableRow sx={{ textAlignLast: "center" }}>
-                <TableCell>{t("user.userorder.date")}</TableCell>
-                <TableCell>{t("user.quantity")}</TableCell>
-                <TableCell>{t("user.userorder.totalprice")}</TableCell>
-                <TableCell>{t("user.userorder.status")}</TableCell>
-                <TableCell>{t("user.userorder.viewdetail")}</TableCell>
+                <TableCell>{t("request.date")}</TableCell>
+                <TableCell>{t("request.guestName")}</TableCell>
+                <TableCell>{t("request.guestRM")}</TableCell>
+                <TableCell>{t("request.request")}</TableCell>
+                <TableCell>{t("request.status")}</TableCell>
+                <TableCell>{t("table.action")}</TableCell>
               </TableRow>
             </TableHead>
             <TableBody>
@@ -76,17 +77,18 @@ function UserOrderList(props) {
                       sx={{ textAlignLast: "center" }}
                     >
                       <TableCell>
-                      {item.created_at &&
+                      {item.created_At &&
                               router?.locale == "ar" ? new Date(
-                                item.created_at.seconds * 1000
+                                item.created_At.seconds * 1000
                                 ).toDateString().replace('Sat', 'السبت').replace('Sun', 'الاحد').replace('Mon', 'الاثنين').replace('Tue', 'الثلاثاء').replace('Wed', 'الاربعاء').replace('Thu', 'الخميس').replace('Fri', 'الجمعة')
                                 .replace('Jan', 'يناير').replace('Feb', 'فبراير').replace('Mar', 'مارس').replace('Apr', 'ابريل').replace('May', 'مايو').replace('Jun', 'يونيو').replace('Jul', 'يوليو').replace('Aug', 'اغسطس').replace('Sept', 'سبتمبر').replace('Nov', 'نوفمبر').replace('Oct', 'اكتوبر').replace('Dec', 'ديسمبر') : new Date(
-                                  item.created_at.seconds * 1000
+                                  item.created_At.seconds * 1000
                                   ).toDateString()
                                 }
                       </TableCell>
-                      <TableCell>{item.itemsQuantity}</TableCell>
-                      <TableCell>{item.finalPrice}</TableCell>
+                      <TableCell>{item.guestName}</TableCell>
+                      <TableCell>{item.guestRM}</TableCell>
+                      <TableCell>{item.request}</TableCell>
                       <TableCell>
                         <Chip
                           label={router.locale == "en"? item?.status: item?.status.replaceAll('Pending', 'معلق').replaceAll('Accepted', 'مقبولة').replaceAll('On its way', 'في الطريق اليك').replaceAll('Delivered', 'تم التوصيل').replaceAll('Completed', 'اكتمل').replaceAll('Canceled', 'ملغاة')}
