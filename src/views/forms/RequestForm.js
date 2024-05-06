@@ -7,9 +7,9 @@ import {
   Dialog,
   Grid,
   TextField,
-  Typography,Menu,Fade,FormControl, InputLabel
+  Typography,Menu,Fade,FormControl, InputLabel,Select,MenuItem,Autocomplete
 } from "@mui/material";
-import { deleteDoc, doc, getDoc } from "firebase/firestore";
+import { deleteDoc, doc, getDoc, getDocs, query,collection,where ,onSnapshot} from "firebase/firestore";
 import { useEffect, useState } from "react";
 import useTranslation from "src/@core/hooks/useTranslation";
 import {
@@ -18,18 +18,15 @@ import {
 } from "src/@core/utils/firebaseutils";
 import { db } from "src/configs/firebaseConfig";
 import AlertMessage from "../Alert/AlertMessage";
-import Select from "@mui/material/Select";
-import MenuItem from "@mui/material/MenuItem";
 import { BorderAll, BorderColor } from "mdi-material-ui";
 
-const Serviceform = (props) => {
+const RequestForm = (props) => {
   // ** States
   const [guestName, setguestName] = useState('');
   const [guestRM, setguestRM] = useState('');
   const [orderTaker, setorderTaker] = useState('');
   const [request, setrequest] = useState('');
-  const [orderRes, setorderRes] = useState('');
-  const [department, setdepartment] = useState('');
+  const [department, setdepartment] = useState();
   const [status, setStatus] = useState('');
   const [requestDoneTime, setRequestDoneTime] = useState('');
   const [responseTime, setResponseTime] = useState('');
@@ -44,6 +41,9 @@ const Serviceform = (props) => {
   const [open, setOpen] = useState(false);
   const [callOpen, setCallOpen] = useState(false);
   const [statusOpen, setStatudOpen] = useState(false);
+
+  const [users, setUsers] = useState([]);
+  const [selectedUser, setSelectedUser] = useState(null);
 
   const [anchorEl, setAnchorEl] = useState(null);
   const handleClick = (event) => {
@@ -73,9 +73,8 @@ const Serviceform = (props) => {
     guestName = guestName.trim();
     orderTaker = orderTaker.trim();
     request = request.trim();
-    orderRes = orderRes.trim();
     department = department.trim();
-
+    !props.CategoriesId?status="Pending":status=status
     if (!guestName) {
       setIsLoading(false);
       setErrorMessage({
@@ -99,7 +98,8 @@ const Serviceform = (props) => {
 
         Create_Update_Doc(
           "requests",
-          { guestName: guestName, guestRM: guestRM, orderTaker: orderTaker, department: department, request: request, orderRes: orderRes, created_At: new Date(), status: status ,requestDoneTime: requestDoneTime , responseTime:responseTime ,guestCalled:guestCalled , followUp:followUp },
+          { guestName: guestName, guestRM: guestRM, orderTaker: orderTaker, department: department, request: request, orderRes: selectedUser, created_At: new Date(), status:!props.CategoriesId?"Pending":status
+          ,requestDoneTime: requestDoneTime , responseTime:responseTime ,guestCalled:guestCalled , followUp:followUp },
           props.CategoriesId
         ).then((action_message) => {
           props.handleClose();
@@ -130,7 +130,6 @@ const Serviceform = (props) => {
     setguestName("");
     setguestRM("");
     setdepartment("");
-    setorderRes("");
     setrequest("");
     setorderTaker("");
     // setImageAsFile("");
@@ -144,10 +143,12 @@ const Serviceform = (props) => {
       const docSnap = await getDoc(docRef);
       if (docSnap.exists()) {
         const data = docSnap.data();
+        const userDoc = await getDoc(doc(db, "users", data.orderRes));
+        const userData = userDoc.data();
+        console.log(userData.display_name)
         setguestName(data.guestName);
         setguestRM(data.guestRM);
         setdepartment(data.department);
-        setorderRes(data.orderRes);
         setrequest(data.request);
         setorderTaker(data.orderTaker);
         setfollowUp(data.followUp);
@@ -155,18 +156,31 @@ const Serviceform = (props) => {
         setResponseTime(data.responseTime);
         setRequestDoneTime(data.requestDoneTime);        
         setStatus(data.status);
-
-        // setFile(data.photo_url);
+        setSelectedUser(userData.display_name)
       }
     };
-
     if (props.CategoriesId) {
       fetchserviceDetail();
     }
   }, [props.open]);
+  useEffect(() => {
+    const fetchUser = async () => {
+      const querySnapshot = await getDocs(
+   query(collection(db, "users"),where("Role" , "==", "Employee"), where("department", "==", department))
+  );
+  const fetchedUsers = querySnapshot.docs.map((doc) => ({
+   id: doc.id,
+   ...doc.data(),
+  }));
+  setUsers(fetchedUsers);
+  };
+  if (department) {
+    fetchUser();
+  }
+  }, [department]);
   return (
     <>
-      <Dialog open={props.open}  maxWidth={"lg"}>
+      <Dialog open={props.open} fullWidth={true} maxWidth={"lg"}>
         <Card style={{ overflowY:"auto"}}>
           <CardHeader
             title={
@@ -206,34 +220,22 @@ const Serviceform = (props) => {
                       setguestRM(e.target.value);
                     }}
                   />
-                  <TextField
-                  fullWidth
-                  label={t("request.orderRes")}
-                  value={orderRes}
-                  style={{ marginBottom: "15px" }}
-                  helperText={
-                    errorMessage.nameerror ? errorMessage.nameerror : ""
-                  }
-                  error={errorMessage.nameerror ? true : false}
-                  onChange={(e) => {
-                    setorderRes(e.target.value);
-                  }}
-                />
-                <FormControl>
+               <Grid container spacing={2}>
+  <Grid item xs={5}>
+    <FormControl fullWidth>
                 <InputLabel id="demo-controlled-open-select-label">
                       {t("request.department")}
                     </InputLabel>
              <Select
-             labelId="demo-controlled-open-select-label"
-             id="demo-controlled-open-select"
-             open={open}
-             style={{ marginBottom: "15px" }}
-             onClose={() => setOpen(false)}
-             onOpen={() => setOpen(true)}
-             value={department}
-             label={t("request.department")}
-                onChange={(e) => setdepartment(e.target.value)} // Update department state
-                >
+                labelId="demo-controlled-open-select-label"
+                id="demo-controlled-open-select"
+                open={open}
+                style={{ marginBottom: "15px" }}
+                onClose={() => setOpen(false)}
+                onOpen={() => setOpen(true)}
+                value={department}
+                label={t("request.department")}
+                onChange={(e) => setdepartment(e.target.value)}>
                 {departmentType.map((e, i) => (
                   <MenuItem onClick={()=>handleClick(e)}value={e} key={i}>
                     {e}
@@ -241,30 +243,26 @@ const Serviceform = (props) => {
                 ))}
               </Select>
                 </FormControl>
-                  {/* <Select
-                    open={open}
-                    style={{ margin: "15px", }}
-                    onClose={() => setOpen(false)}
-                    onOpen={() => setOpen(true)}
-                    value={request}
-                    label={t("request.request")}
-                    onChange={(e) => setrequest(e.target.value)}
-                  >
-                    {departmentType.map((e, i) => (
-                      <MenuItem onClick={handleClose} value={e} key={i}>
-                        {e}
-                      </MenuItem>
-                    ))}
-                  </Select> */}
-              <FormControl>
-                <InputLabel id="demo-controlled-open-select-label" style={{paddingLeft:"15px"}} >
+                </Grid>
+  <Grid item xs={5}>
+                  {department && <Autocomplete
+                    options={users}
+                    getOptionLabel={(user) => user.display_name} // Assuming the user object has a "name" property
+                    value={selectedUser ? selectedUser.display_name : null}
+                    onChange={(event, newValue) => {
+                      setSelectedUser(newValue.id);
+                    }}
+                    renderInput={(params) => <TextField {...params}  label="Select User" />}
+                  />}
+                   </Grid>
+              <Grid item xs={2}>{props.CategoriesId && <FormControl>
+                <InputLabel id="demo-controlled-open-select-label" >
                       {t("request.status")}
                     </InputLabel>
             <Select
               labelId="demo-controlled-open-select-label"
               id="demo-controlled-open-select"
               open={statusOpen}
-              style={{ marginLeft: "15px" }}
               onClose={() => setStatudOpen(false)}
               onOpen={() => setStatudOpen(true)}
               value={status}
@@ -277,7 +275,9 @@ const Serviceform = (props) => {
                 </MenuItem>
               ))}
             </Select>
-            </FormControl>
+            </FormControl>}
+</Grid>
+</Grid>
             <TextField
             fullWidth
             label={t("request.request")}
@@ -305,8 +305,7 @@ const Serviceform = (props) => {
           }}
         />
          <Grid container spacing={2}>
-      <Grid item sm={6} xs={12} style={{ marginBottom: "15px" }}
->
+      <Grid item sm={6} xs={12} style={{ marginBottom: "15px" }}>
         <FormControl fullWidth>
           <InputLabel id="demo-controlled-open-select-label">
           {t("request.guestCalled")}
@@ -338,42 +337,9 @@ const Serviceform = (props) => {
           onChange={(e) => {
             setfollowUp(e.target.value);
           }}
-          // InputProps={{
-          //   pattern: "[A-Za-z ]+",
-          //   inputProps: { min: 0 }
-          // }}
         />
       </Grid>
     </Grid>
-                {/* <Grid item xs={12} display="flex" gap="1rem">
-                  <Button variant="contained" component="label">
-                    {t("form.lables.Choose File")}
-                    <input
-                      type="file"
-                      hidden
-                      onChange={(e) => {
-                        setErrorMessage("");
-                        setImageAsFile((imageFile) => e.target.files[0]);
-                        setFile(URL.createObjectURL(e.target.files[0]));
-                      }}
-                    />
-                  </Button>
-                  <Typography variant="body2" color="red" alignSelf="center">
-                    {errorMessage.imageerror ? errorMessage.imageerror : ""}
-                  </Typography>
-                </Grid> */}
-                {/* {file ? (
-                  <Grid item xs={12} textAlign="center">
-                    <img
-                      src={file}
-                      alt="preview of seleted image"
-                      height="150px"
-                      style={{ borderRadius: "10px" }}
-                    />
-                  </Grid>
-                ) : (
-                  ""
-                )} */}
                 <Grid item xs={12}>
                   {isLoading ? (
                     <Button size="large" sx={{ marginRight: 4 }}>
@@ -406,21 +372,7 @@ const Serviceform = (props) => {
                   >
                     {t("forms.btn.Cancel")}
                   </Button>
-                  {/* {props.CategoriesId ? (
-                    <Button
-                      variant="contained"
-                      color="error"
-                      sx={{ float: "right" }}
-                      size="large"
-                      onClick={() => {
-                        handleDelete();
-                      }}
-                    >
-                      {t("forms.btn.Delete")}
-                    </Button>
-                  ) : (
-                    ""
-                  )} */}
+                 
                 </Grid>
                 </Grid>
               </Grid>
@@ -433,4 +385,4 @@ const Serviceform = (props) => {
   );
 };
 
-export default Serviceform;
+export default RequestForm;

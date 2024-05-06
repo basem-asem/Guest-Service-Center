@@ -125,8 +125,7 @@ function user() {
   useEffect(() => {
     const fetchAllUser = async () => {
       const UsersQuery = query(
-        collection(db, "users"),
-        where("Role", "==", "Admin")
+        collection(db, "users")
       );
       await onSnapshot(UsersQuery, (userSnapshot) => {
         const userarr = [];
@@ -234,8 +233,8 @@ function user() {
                           {item.display_name}
                         </TableCell>
                         <TableCell align="center">{item.email}</TableCell>
-                        {item.departmnet ? <TableCell align="center">{item.departmnet}</TableCell>:<TableCell align="center"><Typography variant="contained" style={{backgroundColor:"#a5a8fc", color:"white", padding:"5px", borderRadius:"4px"}}>
-                              Manager
+                        {item.department ? <TableCell align="center">{item.department}</TableCell>:<TableCell align="center"><Typography variant="contained" style={{backgroundColor:"#a5a8fc", color:"white", padding:"5px", borderRadius:"4px"}}>
+                              Admin
                             </Typography>
                             </TableCell>}
                         <TableCell align="center">{item.phone_number}</TableCell>

@@ -4,10 +4,11 @@ import React, { useEffect, useState } from "react";
 import useTranslation from "src/@core/hooks/useTranslation";
 import UserTable from "src/views/tables/RequestTable";
 import { Plus } from "mdi-material-ui";
-import UserForm from "src/views/forms/RequestForm";
+import RequestForm from "src/views/forms/RequestForm";
 import {
   collection,
   onSnapshot,
+  getDoc,doc 
 } from "firebase/firestore";
 import { db} from "src/configs/firebaseConfig";
 
@@ -28,19 +29,35 @@ const [filterData, setFilterData] = useState("")
  
   useEffect(() => {
     const Query = collection(db, "requests");
-    onSnapshot(Query, (snapshot) => {
-      const allfaqs = [];
+    onSnapshot(Query, async (snapshot) => {
+      const allRequests = [];
       snapshot.forEach((doc) => {
-        allfaqs.push({ docid: doc.id, ...doc.data() });
+        allRequests.push({ docid: doc.id, ...doc.data() });
       });
-      const filteredArray = allfaqs.filter(
+  
+      const updatedRequests = await Promise.all(allRequests.map(async (request) => {
+        if (request.orderRes) {
+          const userDoc = await getDoc(doc(db, "users", request.orderRes));
+          if (userDoc.exists()) {
+            const userData = userDoc.data();
+            console.log(userData.display_name);
+            request.orderRes = userData.display_name; // Assuming the user object has a "displayName" property
+          }
+        }
+        console.log(request)
+        return request;
+      }));
+  
+      const filteredArray = updatedRequests.filter(
         (obj) => obj.guestName?.toLowerCase().match(filterData.toLowerCase())
       );
+  
       setUsers(filteredArray);
       setLoading(false);
     });
   
-  }, [loading]); // Update dependency array to include 'string' instead of 'loading'
+  }, [loading]);
+   // Update dependency array to include 'string' instead of 'loading'
   
   return (
     <>
@@ -85,7 +102,7 @@ const [filterData, setFilterData] = useState("")
           />
         </Grid> */}
       </Grid>
-      <UserForm
+      <RequestForm
         open={open}
         handleClose={handleClose}
       />

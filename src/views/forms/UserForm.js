@@ -73,7 +73,7 @@ const Serviceform = (props) => {
     e.preventDefault();
     setIsLoading(true);
 
-    if (!serviceName || !serviceNameAR || !city || !address || !password|| !phoneNumber ) {
+    if (!serviceName || !serviceNameAR || !password|| !phoneNumber ) {
       setIsLoading(false);
       setErrorMessage({
         nameerror: t("forms.errormessage.inputText"),
@@ -96,8 +96,8 @@ const Serviceform = (props) => {
         Role: type,
         department:department,
         phone_number:phoneNumber,
-        city: city,
-        address: address,
+        // city: city,
+        // address: address,
         password:password,
       };
       if(!props.CategoriesId){
@@ -245,7 +245,7 @@ const Serviceform = (props) => {
                     <MenuItem onClick={() => setTypeOpen(false)} value="Employee">Employee</MenuItem>
                   </Select>
                 </FormControl>
-                {type==="employee" && <FormControl sx={{ m: 1, width: 200 }} xs={12}>
+                {type==="Employee" && <FormControl sx={{ m: 1, width: 200 }} xs={12}>
                 <InputLabel id="demo-controlled-open-select-label">
                       {t("request.department")}
                     </InputLabel>
@@ -271,7 +271,7 @@ const Serviceform = (props) => {
                 ))}
               </Select>
                 </FormControl>}
-      <TextField
+      {/* <TextField
         fullWidth
         label={t("user-detail.table.address")}
         value={address}
@@ -292,7 +292,7 @@ const Serviceform = (props) => {
         }
         error={errorMessage.nameerror ? true : false}
         onChange={(e) => setCity(e.target.value)}
-      />
+      /> */}
       <TextField
         fullWidth
         label={t("user-detail.table.phone")}

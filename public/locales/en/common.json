@@ -118,7 +118,7 @@
     "request.orderTaker":"Order Taker Name",
     "request.followUp":"Follow up call",
     "category.page.form.edit.Category": "Edit User",
-    "employee.form.addBtn": "Add Employee",
+    "employee.form.addBtn": "Add User",
   "user-detail.table.image": "IMAGE",
   "user-detail.table.name": "Name",
   "user-detail.table.type": "Change Type",
