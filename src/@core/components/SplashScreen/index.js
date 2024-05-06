@@ -4,7 +4,7 @@ import appimagelight from "../../../../public/images/logos/favicon.png";
 import themeConfig from "src/configs/themeConfig";
 
 const SplashScreen = ({ finishLoading }) => {
-  // const [isMounted, setIsMounted] = useState(false);
+  const [isMounted, setIsMounted] = useState(false);
 
   const animation = () => {
     const loader = anime.timeline({
