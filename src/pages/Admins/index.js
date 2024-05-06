@@ -239,17 +239,17 @@ function user() {
                             </TableCell>}
                         <TableCell align="center">{item.phone_number}</TableCell>
                         <TableCell align="center">
-                          {/* <Button>
+                          <Button>
                             <Link
                               href={{
-                                pathname: `user/${item.id}`,
+                                pathname: `Admins/${item.id}`,
                                
                               }}
                             >
                               <Eye titleAccess="View User" htmlColor="blue" />
                             </Link>
                           </Button>
-                          <Button
+                          {/* <Button
                             onClick={() => {
                               setBlockpop({
                                 open: true,

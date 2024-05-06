@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { useRouter } from "next/router";
-import { db } from "src/firebase/firebase";
+import { db } from "src/configs/firebaseConfig";
 import {
   collection,
   query,
@@ -14,7 +14,7 @@ import Grid from "@mui/material/Grid";
 import CardContent from "@mui/material/CardContent";
 import Typography from "@mui/material/Typography";
 import userProfile from "public/images/logos/userProfile.png";
-import UserOrderList from "src/Components/UserOrderList/UserOrderList";
+import UserOrderList from "../../views/tables/UserOrderList";
 import { CircularProgress } from "@mui/material";
 import useTranslation from "src/@core/hooks/useTranslation";
 
