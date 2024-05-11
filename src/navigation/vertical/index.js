@@ -42,7 +42,7 @@ const navigation = () => {
     {
       icon: ViewDashboardOutline,
       title: t("navbar.Hotels Category"),
-      path: "/Cities",
+      path: "/categories",
     },
     // {
     //   icon: AccountSupervisorCircleOutline,

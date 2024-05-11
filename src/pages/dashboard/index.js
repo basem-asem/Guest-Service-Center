@@ -31,18 +31,18 @@ const Dashboard = () => {
   useEffect(async () => {
     const UsersQuery = query(
       collection(db, "users"),
-      where("Role", "==", "User")
+      where("Role", "==", "Admin")
     );
     const supplierQuery = query(
       collection(db, "users"),
-      where("Role", "==", "Supplier")
+      where("Role", "==", "Employee")
     );
-    const hotelCategoryQuery = query(collection(db, "category"));
+    const hotelCategoryQuery = query(collection(db, "categories"));
     const ArticlesQuery = collection(db, "Articles");
     const FAQSQuery = collection(db, "FAQ");
     const bookingsQuery = collection(db, "Orders");
     const hotelsQuery = collection(db, "Products");
-    const SubscriptionPlanQuery = collection(db, "Services");
+    const SubscriptionPlanQuery = collection(db, "requests");
     const CouponQuery = collection(db, "Offers");
 
     const userSnap = await getCountFromServer(UsersQuery);
@@ -81,7 +81,7 @@ const Dashboard = () => {
               count={count.user}
               countload={countload}
               icon={<AccountGroupOutline />}
-              url="/users-list/users"
+              url="/Admins"
             />
           </Grid>
           <Grid item xs={12} md={4}>
@@ -90,7 +90,7 @@ const Dashboard = () => {
               count={count.supplier}
               countload={countload}
               icon={<AccountSupervisorCircleOutline />}
-              url="/users-list/suppliers"
+              url="/Admins"
             />
           </Grid>
           <Grid item xs={12} md={4}>
@@ -107,11 +107,11 @@ const Dashboard = () => {
               title={t("dashboard.Total Subscription Packages")}
               count={count.plan}
               countload={countload}
-              icon={<GiftOutline />}
-              url="/subscriptions"
+              icon={<PostOutline />}
+              url="/users-list/request"
             />
           </Grid>
-          <Grid item xs={12} md={4}>
+          {/* <Grid item xs={12} md={4}>
             <LinkCard
               title={t("dashboard.Total Coupons")}
               count={count.coupons}
@@ -153,7 +153,7 @@ const Dashboard = () => {
               countload={countload}
               icon={<Home />}
             />
-          </Grid>
+          </Grid> */}
         </Grid>
       </ApexChartWrapper>
 

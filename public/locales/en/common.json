@@ -43,10 +43,10 @@
     "subnavbar.Information": "Information",
     "search.name": "Search by Name",
 
-    "dashboard.Total Users": "Total Users",
-    "dashboard.Total Supplier": "Total Supplier",
+    "dashboard.Total Users": "Total Admins",
+    "dashboard.Total Supplier": "Total Employees",
     "dashboard.Total Hotels Category": "Total Hotels Category",
-    "dashboard.Total Subscription Packages": "Total Subscription Packages",
+    "dashboard.Total Subscription Packages": "Total Requests",
     "dashboard.Total Coupons": "Total Coupons",
     "dashboard.Total Articles": "Total Articles",
     "dashboard.Total FAQS": "Total FAQS",
