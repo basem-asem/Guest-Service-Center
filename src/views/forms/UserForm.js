@@ -7,12 +7,20 @@ import {
   Dialog,
   Grid,
   TextField,
-  Typography,Menu,Fade
+  Typography,
+  Menu,
+  Fade,
 } from "@mui/material";
-import InputLabel from '@mui/material/InputLabel';
-import OutlinedInput from '@mui/material/OutlinedInput';
-import FormControl from '@mui/material/FormControl';
-import { deleteDoc, doc, getDoc } from "firebase/firestore";
+import InputLabel from "@mui/material/InputLabel";
+import OutlinedInput from "@mui/material/OutlinedInput";
+import FormControl from "@mui/material/FormControl";
+import {
+  deleteDoc,
+  doc,
+  getDoc,
+  collection,
+  onSnapshot,
+} from "firebase/firestore";
 import { useEffect, useState } from "react";
 import useTranslation from "src/@core/hooks/useTranslation";
 import {
@@ -20,14 +28,14 @@ import {
   imageUploading,
   createFirebaseAccountAndDocument,
 } from "src/@core/utils/firebaseutils";
-import { useTheme } from '@mui/material/styles';
+import { useTheme } from "@mui/material/styles";
 import { db } from "src/configs/firebaseConfig";
 import AlertMessage from "../Alert/AlertMessage";
 import Select from "@mui/material/Select";
 import MenuItem from "@mui/material/MenuItem";
-import Chip from '@mui/material/Chip';
-import Box from '@mui/material/Box';
-
+import Chip from "@mui/material/Chip";
+import Box from "@mui/material/Box";
+import { useRouter } from "next/router";
 
 const Serviceform = (props) => {
   // ** States
@@ -38,16 +46,21 @@ const Serviceform = (props) => {
   const [city, setCity] = useState("");
   const [address, setAddress] = useState("");
   const [type, setType] = useState("");
-  const [department, setdepartment] = useState('');
+  const [department, setdepartment] = useState("");
   const [imageAsFile, setImageAsFile] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const [file, setFile] = useState("");
   const [open, setOpen] = useState(false);
   const [typeOpen, setTypeOpen] = useState(false);
-  const departmentType = ["House keeping", "Engineering", "Room Service", "Security", "General"];
-
-
-
+  const [Categories, setCategories] = useState([]);
+  const departmentType = [
+    "House keeping",
+    "Engineering",
+    "Room Service",
+    "Security",
+    "General",
+  ];
+  const router = useRouter();
 
   const handleClick = (event) => {
     setdepartment(event.currentTarget);
@@ -73,54 +86,66 @@ const Serviceform = (props) => {
     e.preventDefault();
     setIsLoading(true);
 
-    if (!serviceName || !serviceNameAR || !password|| !phoneNumber ) {
+    if (!serviceName) {
       setIsLoading(false);
       setErrorMessage({
         nameerror: t("forms.errormessage.inputText"),
-        emailerror: t("forms.errormessage.inputText"),
-        cityerror: t("forms.errormessage.inputText"),
-        addresserror: t("forms.errormessage.inputText"),
-        passworderror: t("forms.errormessage.inputText"),
+      });
+    } else if (!phoneNumber) {
+      setIsLoading(false);
+      setErrorMessage({
         phoneerror: t("forms.errormessage.inputText"),
       });
-    }else if (!imageAsFile && !file) {
+    } else if (!serviceNameAR) {
+      setIsLoading(false);
+      setErrorMessage({
+        emailerror: t("forms.errormessage.inputText"),
+      });
+    } else if (!password) {
+      setIsLoading(false);
+      setErrorMessage({
+        phoneerror: t("forms.errormessage.inputText"),
+      });
+    } else if (!imageAsFile && !file) {
       setIsLoading(false);
       setErrorMessage({
         imageerror: t("forms.errormessage.inputfile"),
       });
-    }else {
+    } else {
       const userObject = {
         display_name: serviceName,
         email: serviceNameAR,
         photo_url: file,
         Role: type,
-        department:department,
-        phone_number:phoneNumber,
+        department: department,
+        phone_number: phoneNumber,
         // city: city,
         // address: address,
-        password:password,
+        password: password,
       };
-      if(!props.CategoriesId){
+      if (!props.CategoriesId) {
         createFirebaseAccountAndDocument(userObject).then((action_message) => {
           props.handleClose();
           setAlertpop({
             open: true,
             message: t(action_message),
           });
-        })
+        });
       }
       imageUploading("photo_url", imageAsFile).then((firebase_url) => {
         if (imageAsFile) {
           userObject.photo_url = firebase_url;
         }
-  
-        Create_Update_Doc("users", userObject, props.CategoriesId).then((action_message) => {
-          props.handleClose();
-          setAlertpop({
-            open: true,
-            message: t(action_message),
-          });
-        });
+
+        Create_Update_Doc("users", userObject, props.CategoriesId).then(
+          (action_message) => {
+            props.handleClose();
+            setAlertpop({
+              open: true,
+              message: t(action_message),
+            });
+          }
+        );
       });
     }
   };
@@ -163,7 +188,7 @@ const Serviceform = (props) => {
         setCity(data.city);
         setPhoneNumber(data.phone_number);
         setFile(data.photo_url);
-        setdepartment(data.department)
+        setdepartment(data.department);
       }
     };
 
@@ -171,21 +196,66 @@ const Serviceform = (props) => {
       fetchserviceDetail();
     }
   }, [props.open]);
-  console.log(type)
+  useEffect(() => {
+    const fetchAllService = async () => {
+      const categoryQuery = collection(db, "categories");
+      await onSnapshot(categoryQuery, async (categorySnapshot) => {
+        const categoryarr = [];
+        for (const category of categorySnapshot.docs) {
+          const categorydata = category.data();
+          categorydata.id = category.id;
+
+          // Listen to changes in requests for the current city
+          const requestsRef = collection(
+            db,
+            "categories",
+            category.id,
+            "requests"
+          );
+          const unsubscribe = onSnapshot(requestsRef, (requestsSnapshot) => {
+            const requestsData = requestsSnapshot.docs.map((area) => ({
+              ...area.data(),
+              id: area.id,
+            }));
+            categorydata.requests = requestsData;
+            setCategories((prevCategories) => {
+              // Update only the category that has changed
+              return prevCategories.map((prevCategory) => {
+                if (prevCategory.id === categorydata.id) {
+                  return categorydata;
+                }
+                return prevCategory;
+              });
+            });
+          });
+
+          categoryarr.push(categorydata);
+        }
+        setCategories(categoryarr);
+        setIsLoading(false);
+      });
+    };
+    fetchAllService();
+  }, []);
+  console.log(type);
 
   return (
     <>
       <Dialog open={props.open}>
-        <Card style={{overflowY:"auto"}}>
+        <Card style={{ overflowY: "auto" }}>
           <CardHeader
-            title={props.CategoriesId ? t("category.page.form.edit.Category"): t("employee.form.addBtn")}
+            title={
+              props.CategoriesId
+                ? t("category.page.form.edit.Category")
+                : t("employee.form.addBtn")
+            }
             titleTypographyProps={{ variant: "h6" }}
           />
           <CardContent>
             <form onSubmit={handleSubmit}>
               <Grid container spacing={5}>
                 <Grid item xs={12}>
-                <TextField
+                  <TextField
                     fullWidth
                     label={t("user-detail.table.name")}
                     value={serviceName}
@@ -199,79 +269,100 @@ const Serviceform = (props) => {
                     }}
                   />
                   <TextField
-                  fullWidth
-                  label={t("user-detail.table.email")}
-                  value={serviceNameAR}
-                  style={{ marginBottom: "15px" }}
-                  helperText={
-                    errorMessage.emailerror ? errorMessage.emailerror : ""
-                  }
-                  error={errorMessage.emailerror ? true : false}
-                  onChange={(e) => {
-                    setserviceNameAR(e.target.value);
-                  }}
-                  />
-                <TextField
-                  fullWidth
-                  type="password"
-                  label={t("user-detail.table.password")}
-                  value={password}
-                  style={{ marginBottom: "15px" }}
-                  helperText={
-                    errorMessage.nameerror ? errorMessage.nameerror : ""
-                  }
-                  error={errorMessage.nameerror ? true : false}
-                  onChange={(e) => {
-                    setPassword(e.target.value);
-                  }}
-                />
-                <FormControl sx={{ m: 1, width: 200 }} xs={12}>
-                  <InputLabel id="demo-name-label">{t("user-detail.table.type")}</InputLabel>
-                  <Select
-                    open={typeOpen}
+                    fullWidth
+                    label={t("user-detail.table.email")}
+                    value={serviceNameAR}
                     style={{ marginBottom: "15px" }}
-                    onClose={() => setTypeOpen(false)}
-                    onOpen={() => setTypeOpen(true)}
-                    value={props.type? props.type: type}
-                    label={t("user-detail.table.type")}
-                    id="demo-name-label"
+                    helperText={
+                      errorMessage.emailerror ? errorMessage.emailerror : ""
+                    }
+                    error={errorMessage.emailerror ? true : false}
+                    onChange={(e) => {
+                      setserviceNameAR(e.target.value);
+                    }}
+                  />
+                  <TextField
+                    fullWidth
+                    type="password"
+                    label={t("user-detail.table.password")}
+                    value={password}
+                    style={{ marginBottom: "15px" }}
                     helperText={
                       errorMessage.nameerror ? errorMessage.nameerror : ""
                     }
                     error={errorMessage.nameerror ? true : false}
-                    onChange={(e) => setType(e.target.value)}
-                    >
-                    <MenuItem onClick={() => setTypeOpen(false)} value="Admin">Admin</MenuItem>
-                    <MenuItem onClick={() => setTypeOpen(false)} value="Employee">Employee</MenuItem>
-                  </Select>
-                </FormControl>
-                {type==="Employee" && <FormControl sx={{ m: 1, width: 200 }} xs={12}>
-                <InputLabel id="demo-controlled-open-select-label">
-                      {t("request.department")}
+                    onChange={(e) => {
+                      setPassword(e.target.value);
+                    }}
+                  />
+                  <FormControl sx={{ m: 1, width: 200 }} xs={12}>
+                    <InputLabel id="demo-name-label">
+                      {t("user-detail.table.type")}
                     </InputLabel>
-             <Select
-             labelId="demo-controlled-open-select-label"
-             id="demo-controlled-open-select"
-             open={open}
-             style={{ marginBottom: "15px" }}
-             onClose={() => setOpen(false)}
-             onOpen={() => setOpen(true)}
-             value={department}
-             label={t("request.department")}
-             helperText={
-              errorMessage.nameerror ? errorMessage.nameerror : ""
-            }
-            error={errorMessage.nameerror ? true : false}
-                onChange={(e) => setdepartment(e.target.value)} // Update department state
-                >
-                {departmentType.map((e, i) => (
-                  <MenuItem onClick={()=>handleClick(e)} value={e} key={i}>
-                    {e}
-                  </MenuItem>
-                ))}
-              </Select>
-                </FormControl>}
-      {/* <TextField
+                    <Select
+                      open={typeOpen}
+                      style={{ marginBottom: "15px" }}
+                      onClose={() => setTypeOpen(false)}
+                      onOpen={() => setTypeOpen(true)}
+                      value={props.type ? props.type : type}
+                      label={t("user-detail.table.type")}
+                      id="demo-name-label"
+                      helperText={
+                        errorMessage.nameerror ? errorMessage.nameerror : ""
+                      }
+                      error={errorMessage.nameerror ? true : false}
+                      onChange={(e) => setType(e.target.value)}
+                    >
+                      <MenuItem
+                        onClick={() => setTypeOpen(false)}
+                        value="Admin"
+                      >
+                        Admin
+                      </MenuItem>
+                      <MenuItem
+                        onClick={() => setTypeOpen(false)}
+                        value="Employee"
+                      >
+                        Employee
+                      </MenuItem>
+                    </Select>
+                  </FormControl>
+                  {type === "Employee" && (
+                    <FormControl sx={{ m: 1, width: 200 }} xs={12}>
+                      <InputLabel id="demo-controlled-open-select-label">
+                        {t("request.department")}
+                      </InputLabel>
+                      <Select
+                        labelId="demo-controlled-open-select-label"
+                        id="demo-controlled-open-select"
+                        open={open}
+                        style={{ marginBottom: "15px" }}
+                        onClose={() => setOpen(false)}
+                        onOpen={() => setOpen(true)}
+                        value={department}
+                        label={t("request.department")}
+                        helperText={
+                          errorMessage.nameerror ? errorMessage.nameerror : ""
+                        }
+                        error={errorMessage.nameerror ? true : false}
+                        onChange={(e) => setdepartment(e.target.value)} // Update department state
+                      >
+                        {Categories &&
+                          Categories.map((value, index) =>
+                            router.locale == "ar" ? (
+                              <MenuItem value={value.id} key={index}>
+                                {value.nameAR}
+                              </MenuItem>
+                            ) : (
+                              <MenuItem value={value.id} key={index}>
+                                {value.nameEN}
+                              </MenuItem>
+                            )
+                          )}
+                      </Select>
+                    </FormControl>
+                  )}
+                  {/* <TextField
         fullWidth
         label={t("user-detail.table.address")}
         value={address}
@@ -293,16 +384,16 @@ const Serviceform = (props) => {
         error={errorMessage.nameerror ? true : false}
         onChange={(e) => setCity(e.target.value)}
       /> */}
-      <TextField
-        fullWidth
-        label={t("user-detail.table.phone")}
-        value={phoneNumber}
-        helperText={
-          errorMessage.nameerror ? errorMessage.nameerror : ""
-        }
-        error={errorMessage.nameerror ? true : false}
-        onChange={(e) => setPhoneNumber(e.target.value)}
-      />
+                  <TextField
+                    fullWidth
+                    label={t("user-detail.table.phone")}
+                    value={phoneNumber}
+                    helperText={
+                      errorMessage.nameerror ? errorMessage.nameerror : ""
+                    }
+                    error={errorMessage.nameerror ? true : false}
+                    onChange={(e) => setPhoneNumber(e.target.value)}
+                  />
                 </Grid>
                 <Grid item xs={12} display="flex" gap="1rem">
                   <Button variant="contained" component="label">

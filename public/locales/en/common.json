@@ -120,6 +120,7 @@
     "request.followUp":"Follow up call",
     "request.calles":"Number of calls",
     "request.followup":"Follow Up",
+
     "category.page.form.edit.Category": "Edit User",
     "employee.form.addBtn": "Add User",
   "user-detail.table.image": "IMAGE",
@@ -130,5 +131,19 @@
   "user-detail.table.address": "Address",
   "user-detail.table.city": "City",
   "user-detail.table.department": "Department",
-  "user-detail.table.password": "Password"
+  "user-detail.table.password": "Password",
+  "cities.newCity":"Add new Category",
+  "cities.noCity":"Categories Not Found",
+  "cities.editCity":"Edit Category",
+  "cities.nameEN":"Category name in English",
+  "cities.nameAR":"Category name in Arabic",
+  "cities.raduis":"Raduis around the supplier in Meter",
+  "cities.confirmdelete":"Are you sure you want to delete this Category?",
+
+  "cities.newArea":"Add new Request",
+  "cities.editArea":"Edit Request",
+  "cities.selectCity":"Select Category",
+  "cities.AreanameEN":"Request name in English",
+  "cities.AreanameAR":"Request name in Arabic"
+
 }

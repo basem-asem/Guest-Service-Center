@@ -6,7 +6,7 @@ import {
   deleteDoc,
   doc,
   where,
-  updateDoc,
+  updateDoc,getDoc
 } from "firebase/firestore";
 import { db } from "src/configs/firebaseConfig";
 import Card from "@mui/material/Card";
@@ -127,11 +127,23 @@ function user() {
       const UsersQuery = query(
         collection(db, "users")
       );
-      await onSnapshot(UsersQuery, (userSnapshot) => {
+      await onSnapshot(UsersQuery, async (userSnapshot) => {
         const userarr = [];
         userSnapshot.docs.map((user) => {
           userarr.push({ ...user.data(), id: user.id });
         });
+        const updatedRequests = await Promise.all(userarr.map(async (request) => {
+          if (request.department) {
+            const userDoc = await getDoc(doc(db, "categories", request.department));
+            if (userDoc.exists()) {
+              const userData = userDoc.data();
+              console.log(userData.display_name);
+              request.department = userData.nameEN; // Assuming the user object has a "displayName" property
+            }
+          }
+          return request;
+        }));
+        
         setUsers(userarr);
         setInputSearch(userarr);
         setIsLoading(false)

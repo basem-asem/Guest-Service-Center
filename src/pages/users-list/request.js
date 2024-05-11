@@ -9,7 +9,7 @@ import {
   collection,
   onSnapshot,
   orderBy,query,
-  // getDoc,doc 
+  getDoc,doc 
 } from "firebase/firestore";
 import { db} from "src/configs/firebaseConfig";
 
@@ -36,17 +36,17 @@ const [filterData, setFilterData] = useState("")
         allRequests.push({ docid: doc.id, ...doc.data() });
       });
   
-      // const updatedRequests = await Promise.all(allRequests.map(async (request) => {
-      //   if (request.orderRes) {
-      //     const userDoc = await getDoc(doc(db, "users", request.orderRes));
-      //     if (userDoc.exists()) {
-      //       const userData = userDoc.data();
-      //       console.log(userData.display_name);
-      //       request.orderRes = userData.display_name; // Assuming the user object has a "displayName" property
-      //     }
-      //   }
-      //   return request;
-      // }));
+      const updatedRequests = await Promise.all(allRequests.map(async (request) => {
+        if (request.department) {
+          const userDoc = await getDoc(doc(db, "categories", request.department));
+          if (userDoc.exists()) {
+            const userData = userDoc.data();
+            console.log(userData.display_name);
+            request.department = userData.nameEN; // Assuming the user object has a "displayName" property
+          }
+        }
+        return request;
+      }));
   
       const filteredArray = allRequests.filter(
         (obj) => obj.guestName?.toLowerCase().match(filterData.toLowerCase())

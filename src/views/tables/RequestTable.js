@@ -218,7 +218,7 @@ const UserTable = ({ children, loading, setLoading, type }) => {
                         )}
                       </TableCell> */}
                       <TableCell align="center">
-                        <IconButton>
+                        {/* <IconButton>
                           <Link
                             passHref
                             href={`/user-detail/${value.uid}`}
@@ -226,7 +226,7 @@ const UserTable = ({ children, loading, setLoading, type }) => {
                           >
                             <Eye color="info" />
                           </Link>
-                        </IconButton>
+                        </IconButton> */}
                         {/* <IconButton
                           onClick={() => {
                             setBlockpop({

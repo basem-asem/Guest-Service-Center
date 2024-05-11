@@ -31,14 +31,18 @@ function userId() {
   const fetchData = async () => {
     const usersCollectionRef = doc(db, "users", userId);
     const docSnap = await getDoc(usersCollectionRef);
+    const user = docSnap.data();
     if (docSnap.exists()) {
-      setUser(docSnap.data());
+      const categoryCollectionRef = doc(db, "categories", user.department);
+      const docSnap = await getDoc(categoryCollectionRef);
+      const category = docSnap.data();
+      user.department = category.nameEN
+      setUser(user);
       setIsLoading(false);
     } else {
       console.log("No such document!");
       setIsLoading(false);
     }
-    const user = docSnap.data();
 
     const data = query(userOrderRef, where("orderResId", "==", userId));
     onSnapshot(data, (querySnapshot) => {

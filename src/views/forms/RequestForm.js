@@ -36,9 +36,11 @@ import { db } from "src/configs/firebaseConfig";
 import AlertMessage from "../Alert/AlertMessage";
 import { BorderAll, BorderColor } from "mdi-material-ui";
 import Cookies from "js-cookie";
+import { useRouter } from "next/router";
 
 const RequestForm = (props) => {
   // ** States
+  const [Categories, setCategories] = useState([]);
   const [guestName, setguestName] = useState("");
   const [guestRM, setguestRM] = useState("");
   const [request, setrequest] = useState("");
@@ -68,6 +70,7 @@ const RequestForm = (props) => {
   const [users, setUsers] = useState([]);
   const [selectedUser, setSelectedUser] = useState('');
   const [selectedUserId, setSelectedUserId] = useState('');
+  const router = useRouter();
 
   const [anchorEl, setAnchorEl] = useState(null);
   const handleClick = (event) => {
@@ -224,6 +227,40 @@ const RequestForm = (props) => {
       fetchUser();
     }
   }, [department]);
+
+  useEffect(() => {
+    const fetchAllService = async () => {
+      const categoryQuery = collection(db, "categories");
+      await onSnapshot(categoryQuery, async (categorySnapshot) => {
+        const categoryarr = [];
+        for (const category of categorySnapshot.docs) {
+          const categorydata = category.data();
+          categorydata.id = category.id;
+          
+          // Listen to changes in requests for the current city
+          const requestsRef = collection(db, "categories", category.id, "requests");
+          const unsubscribe = onSnapshot(requestsRef, (requestsSnapshot) => {
+            const requestsData = requestsSnapshot.docs.map(area => ({ ...area.data(), id: area.id }));
+            categorydata.requests = requestsData;
+            setCategories((prevCategories) => {
+              // Update only the category that has changed
+              return prevCategories.map((prevCategory) => {
+                if (prevCategory.id === categorydata.id) {
+                  return categorydata;
+                }
+                return prevCategory;
+              });
+            });
+          });
+  
+          categoryarr.push(categorydata);
+        }
+        setCategories(categoryarr);
+        setIsLoading(false);
+      });
+    };    
+    fetchAllService();
+  }, []);
   return (
     <>
       <Dialog open={props.open} fullWidth={true} maxWidth={"lg"}>
@@ -283,14 +320,12 @@ const RequestForm = (props) => {
                           label={t("request.department")}
                           onChange={(e) => setdepartment(e.target.value)}
                         >
-                          {departmentType.map((e, i) => (
-                            <MenuItem
-                              onClick={() => handleClick(e)}
-                              value={e}
-                              key={i}
-                            >
-                              {e}
-                            </MenuItem>
+                          {Categories && Categories.map((value, index) => (
+                             router.locale == "ar"? (<MenuItem value={value.id} key={index}>
+                              {value.nameAR}
+                            </MenuItem>): (<MenuItem value={value.id} key={index}>
+                              {value.nameEN}
+                            </MenuItem>)
                           ))}
                         </Select>
                       </FormControl>
