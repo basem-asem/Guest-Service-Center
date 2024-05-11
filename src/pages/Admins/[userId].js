@@ -33,16 +33,14 @@ function userId() {
     const docSnap = await getDoc(usersCollectionRef);
     if (docSnap.exists()) {
       setUser(docSnap.data());
-      if (docSnap.data().selectedAddress) {
-        const userAddressSnap = await getDoc(docSnap.data().selectedAddress);
-        setUser({ ...docSnap.data(), selectedAddress: userAddressSnap.data() });
-      }
       setIsLoading(false);
     } else {
       console.log("No such document!");
       setIsLoading(false);
     }
-    const data = query(userOrderRef, where("orderRes", "==", userId));
+    const user = docSnap.data();
+
+    const data = query(userOrderRef, where("orderResId", "==", userId));
     onSnapshot(data, (querySnapshot) => {
       const productOrderarr = [];
       querySnapshot.docs.map(async (doc) => {

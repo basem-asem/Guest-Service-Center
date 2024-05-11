@@ -11,9 +11,16 @@ import {
   TableHead,
   TablePagination,
   TableRow,
-  Chip
+  Chip,
 } from "@mui/material";
-import { AccountLock, AccountLockOpen, Eye, Phone, Delete, Pencil } from "mdi-material-ui";
+import {
+  AccountLock,
+  AccountLockOpen,
+  Eye,
+  Phone,
+  Delete,
+  Pencil,PhoneIncoming,PhoneOutgoing
+} from "mdi-material-ui";
 import React, { useEffect, useState } from "react";
 import Link from "next/link";
 import useTranslation from "src/@core/hooks/useTranslation";
@@ -24,9 +31,6 @@ import { db } from "src/configs/firebaseConfig";
 import DeleteDailog from "src/views/dailogs/DeleteDailog";
 import AlertMessage from "src/views/Alert/AlertMessage";
 import UserForm from "src/views/forms/RequestForm";
-
-
-
 
 const UserTable = ({ children, loading, setLoading, type }) => {
   const { locale } = useRouter();
@@ -103,7 +107,7 @@ const UserTable = ({ children, loading, setLoading, type }) => {
   };
 
   useEffect(() => {
-    setUserId("")
+    setUserId("");
   }, [children]);
 
   return (
@@ -120,6 +124,7 @@ const UserTable = ({ children, loading, setLoading, type }) => {
                 <TableCell align="center">{t("request.orderRes")}</TableCell>
                 <TableCell align="center">{t("request.department")}</TableCell>
                 <TableCell align="center">{t("request.guestCalled")}</TableCell>
+                <TableCell align="center">{t("request.followup")}</TableCell>
                 <TableCell align="center">{t("table.action")}</TableCell>
               </TableRow>
             </TableHead>
@@ -155,8 +160,18 @@ const UserTable = ({ children, loading, setLoading, type }) => {
                       <TableCell align="center">{value.guestRM}</TableCell>
                       <TableCell align="center">{value.request}</TableCell>
                       <TableCell align="center">
-                      <Chip
-                          label={router.locale == "en"? value?.status: value?.status.replaceAll('Pending', 'معلق').replaceAll('Accepted', 'مقبولة').replaceAll('On its way', 'في الطريق اليك').replaceAll('Delivered', 'تم التوصيل').replaceAll('Completed', 'اكتمل').replaceAll('Canceled', 'ملغاة')}
+                        <Chip
+                          label={
+                            router.locale == "en"
+                              ? value?.status
+                              : value?.status
+                                  .replaceAll("Pending", "معلق")
+                                  .replaceAll("Accepted", "مقبولة")
+                                  .replaceAll("On its way", "في الطريق اليك")
+                                  .replaceAll("Delivered", "تم التوصيل")
+                                  .replaceAll("Completed", "اكتمل")
+                                  .replaceAll("Canceled", "ملغاة")
+                          }
                           color={statusObj[value && value?.status]?.color}
                           sx={{
                             height: 24,
@@ -168,16 +183,24 @@ const UserTable = ({ children, loading, setLoading, type }) => {
                       </TableCell>
                       <TableCell align="center">{value.orderRes}</TableCell>
                       <TableCell align="center">{value.department}</TableCell>
-                      <TableCell align="center" style={{padding:"0 10px"}}><Icon style={{overflow:"unset"}}>
+                      <TableCell align="center" style={{ padding: "0 10px" }}>
+                        <Icon style={{ overflow: "unset" }}>
                           {value.guestCalled ? (
-                            <Badge badgeContent={value.followUp} color="primary">
-                            <Phone color="success" />
-                          </Badge>
+                            <Badge badgeContent={value.noCalls} color="primary" style={{paddingRight: 10}}>
+                              <PhoneOutgoing color="success" />
+                            </Badge>
                           ) : (
                             <Phone htmlColor="red" />
                           )}
-                        </Icon></TableCell>
-                        
+                        </Icon>
+                      </TableCell>
+                      <TableCell align="center" style={{ padding: "0 10px" }}>
+                        {value.followUp && <Icon style={{ overflow: "unset" }}>
+                          <Badge badgeContent={value.followUp} color="primary" style={{paddingRight: 10}}>
+                            <PhoneIncoming color="success" />
+                          </Badge>
+                        </Icon>}
+                      </TableCell>
 
                       {/* <TableCell>
                         {value.type !== "SP" ? (
@@ -220,19 +243,19 @@ const UserTable = ({ children, loading, setLoading, type }) => {
                           )}
                         </IconButton> */}
                         <IconButton
-                onClick={(e) => {
-                  handleClickOpen(e, value.docid);
-                }}
-              >
-                <Pencil htmlColor="blue" />
-              </IconButton>
-              <IconButton
-                onClick={() => {
-                  handlePopopen(value.docid);
-                }}
-              >
-                <Delete htmlColor="red" />
-              </IconButton>
+                          onClick={(e) => {
+                            handleClickOpen(e, value.docid);
+                          }}
+                        >
+                          <Pencil htmlColor="blue" />
+                        </IconButton>
+                        <IconButton
+                          onClick={() => {
+                            handlePopopen(value.docid);
+                          }}
+                        >
+                          <Delete htmlColor="red" />
+                        </IconButton>
                       </TableCell>
                     </TableRow>
                   ))
@@ -267,11 +290,7 @@ const UserTable = ({ children, loading, setLoading, type }) => {
         handlePopclose={handlePopclose}
       />
       <AlertMessage setAlertpop={setAlertpop} Alertpop={Alertpop} />
-      <UserForm
-        open={open}
-        handleClose={handleClose}
-        CategoriesId={userId}
-      />
+      <UserForm open={open} handleClose={handleClose} CategoriesId={userId} />
     </>
   );
 };

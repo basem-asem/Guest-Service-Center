@@ -7,9 +7,25 @@ import {
   Dialog,
   Grid,
   TextField,
-  Typography,Menu,Fade,FormControl, InputLabel,Select,MenuItem,Autocomplete
+  Typography,
+  Menu,
+  Fade,
+  FormControl,
+  InputLabel,
+  Select,
+  MenuItem,
+  Autocomplete,
 } from "@mui/material";
-import { deleteDoc, doc, getDoc, getDocs, query,collection,where ,onSnapshot} from "firebase/firestore";
+import {
+  deleteDoc,
+  doc,
+  getDoc,
+  getDocs,
+  query,
+  collection,
+  where,
+  onSnapshot,
+} from "firebase/firestore";
 import { useEffect, useState } from "react";
 import useTranslation from "src/@core/hooks/useTranslation";
 import {
@@ -23,18 +39,25 @@ import Cookies from "js-cookie";
 
 const RequestForm = (props) => {
   // ** States
-  const [guestName, setguestName] = useState('');
-  const [guestRM, setguestRM] = useState('');
-  const [request, setrequest] = useState('');
+  const [guestName, setguestName] = useState("");
+  const [guestRM, setguestRM] = useState("");
+  const [request, setrequest] = useState("");
   const [department, setdepartment] = useState();
-  const [status, setStatus] = useState('');
-  const [requestDoneTime, setRequestDoneTime] = useState('');
-  const [responseTime, setResponseTime] = useState('');
+  const [status, setStatus] = useState("");
+  const [requestDoneTime, setRequestDoneTime] = useState("");
+  const [responseTime, setResponseTime] = useState("");
   const [guestCalled, setguestCalled] = useState(false);
-  const [followUp, setfollowUp] = useState(0);
-  const departmentType = ["House keeping", "Engineering", "Room Service", "Security", "General"];
-  const statusType = ["Pending","Work on it", "Completed"];
-const orderTakerId = Cookies.get("_isAdmin");
+  const [followUp, setfollowUp] = useState(null);
+  const [noCalls, setNoCalls] = useState(null);
+  const departmentType = [
+    "House keeping",
+    "Engineering",
+    "Room Service",
+    "Security",
+    "General",
+  ];
+  const statusType = ["Pending", "Work on it", "Completed"];
+  const orderTakerId = Cookies.get("_isAdmin");
   // const [imageAsFile, setImageAsFile] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   // const [file, setFile] = useState();
@@ -43,7 +66,8 @@ const orderTakerId = Cookies.get("_isAdmin");
   const [statusOpen, setStatudOpen] = useState(false);
 
   const [users, setUsers] = useState([]);
-  const [selectedUser, setSelectedUser] = useState(null);
+  const [selectedUser, setSelectedUser] = useState('');
+  const [selectedUserId, setSelectedUserId] = useState('');
 
   const [anchorEl, setAnchorEl] = useState(null);
   const handleClick = (event) => {
@@ -73,18 +97,18 @@ const orderTakerId = Cookies.get("_isAdmin");
     guestName = guestName.trim();
     request = request.trim();
     department = department.trim();
-    !props.CategoriesId?status="Pending":status=status
+    !props.CategoriesId ? (status = "Pending") : (status = status);
     if (!guestName) {
       setIsLoading(false);
       setErrorMessage({
         nameerror: t("forms.errormessage.inputText"),
       });
-    // } else if (!imageAsFile && !file) {
-    //   setIsLoading(false);
-    //   setErrorMessage({
-    //     imageerror: t("forms.errormessage.inputfile"),
-    //   });
-    }else if (!guestRM) {
+      // } else if (!imageAsFile && !file) {
+      //   setIsLoading(false);
+      //   setErrorMessage({
+      //     imageerror: t("forms.errormessage.inputfile"),
+      //   });
+    } else if (!guestRM) {
       setIsLoading(false);
       setErrorMessage({
         nameerror: t("forms.errormessage.inputText"),
@@ -95,22 +119,38 @@ const orderTakerId = Cookies.get("_isAdmin");
       //     file = firebase_url;
       //   }
 
-        Create_Update_Doc(
-          "requests",
-          { guestName: guestName, guestRM: guestRM, orderTaker: orderTakerId, department: department, request: request, orderRes: selectedUser, created_At: new Date(), status:!props.CategoriesId?"Pending":status
-          ,requestDoneTime: requestDoneTime , responseTime:responseTime ,guestCalled:guestCalled , followUp:followUp },
-          props.CategoriesId
-        ).then((action_message) => {
-          props.handleClose();
-
-          // Insert Alert
-          setAlertpop({
-            open: true,
-            message: t(action_message),
-          });
-        });
+      const requestData = {
+        guestName: guestName,
+        guestRM: guestRM,
+        orderTaker: orderTakerId,
+        department: department,
+        request: request,
+        orderRes: selectedUser,
+        status: !props.CategoriesId ? "Pending" : status,
+        requestDoneTime: requestDoneTime,
+        responseTime: responseTime,
+        guestCalled: guestCalled,
+        followUp: followUp,
+        noCalls: noCalls,
+        orderResId: selectedUserId,
       };
-    };
+      
+      if (!props.CategoriesId) {
+        requestData.created_At = new Date();
+      }
+      
+      Create_Update_Doc("requests", requestData, props.CategoriesId
+      ).then((action_message) => {
+        props.handleClose();
+
+        // Insert Alert
+        setAlertpop({
+          open: true,
+          message: t(action_message),
+        });
+      });
+    }
+  };
 
   // const handleDelete = async () => {
   //   await deleteDoc(doc(db, "users", props.CategoriesId)).then(() => {
@@ -132,30 +172,35 @@ const orderTakerId = Cookies.get("_isAdmin");
     setrequest("");
     // setImageAsFile("");
     // setFile("");
-    setIsLoading(false);        
+    setIsLoading(false);
     setStatus("");
-
 
     const fetchserviceDetail = async () => {
       const docRef = doc(db, "requests", props.CategoriesId);
       const docSnap = await getDoc(docRef);
       if (docSnap.exists()) {
         const data = docSnap.data();
-        const userDoc = await getDoc(doc(db, "users", data.orderRes));
-        const userData = userDoc.data();
-        console.log(userData.display_name)
+        console.log(data.orderRes);
+    
+        // // Fetch user data using the orderRes ID
+        // const userDoc = await getDoc(doc(db, "users", data.orderRes));
+        // const userData = userDoc.data();
+    
         setguestName(data.guestName);
         setguestRM(data.guestRM);
         setdepartment(data.department);
         setrequest(data.request);
         setfollowUp(data.followUp);
+        setNoCalls(data.noCalls)
         setguestCalled(data.guestCalled);
         setResponseTime(data.responseTime);
-        setRequestDoneTime(data.requestDoneTime);        
+        setRequestDoneTime(data.requestDoneTime);
         setStatus(data.status);
-        setSelectedUser(userData.display_name)
+        setSelectedUser(data.orderRes); // Set user data to selectedUser state
+        console.log(data.orderRes.name)
       }
     };
+    
     if (props.CategoriesId) {
       fetchserviceDetail();
     }
@@ -163,22 +208,26 @@ const orderTakerId = Cookies.get("_isAdmin");
   useEffect(() => {
     const fetchUser = async () => {
       const querySnapshot = await getDocs(
-   query(collection(db, "users"),where("Role" , "==", "Employee"), where("department", "==", department))
-  );
-  const fetchedUsers = querySnapshot.docs.map((doc) => ({
-   id: doc.id,
-   ...doc.data(),
-  }));
-  setUsers(fetchedUsers);
-  };
-  if (department) {
-    fetchUser();
-  }
-  }, [department]);
+        query(
+          collection(db, "users"),
+          where("Role", "==", "Employee"),
+          where("department", "==", department)
+        )
+      );
+      const fetchedUsers = querySnapshot.docs.map((doc) => ({
+        id: doc.id,
+        name:doc.data().display_name,
+      }));
+      setUsers(fetchedUsers);
+    };
+    if (department) {
+      fetchUser();
+    }
+  }, [department]);
   return (
     <>
       <Dialog open={props.open} fullWidth={true} maxWidth={"lg"}>
-        <Card style={{ overflowY:"auto"}}>
+        <Card style={{ overflowY: "auto" }}>
           <CardHeader
             title={
               props.CategoriesId
@@ -191,7 +240,7 @@ const orderTakerId = Cookies.get("_isAdmin");
             <form onSubmit={handleSubmit}>
               <Grid container spacing={5}>
                 <Grid item xs={12}>
-                <TextField
+                  <TextField
                     fullWidth
                     label={t("request.guestName")}
                     value={guestName}
@@ -217,147 +266,195 @@ const orderTakerId = Cookies.get("_isAdmin");
                       setguestRM(e.target.value);
                     }}
                   />
-               <Grid container spacing={2}>
-  <Grid item xs={5}>
-    <FormControl fullWidth>
-                <InputLabel id="demo-controlled-open-select-label">
-                      {t("request.department")}
-                    </InputLabel>
-             <Select
-                labelId="demo-controlled-open-select-label"
-                id="demo-controlled-open-select"
-                open={open}
-                style={{ marginBottom: "15px" }}
-                onClose={() => setOpen(false)}
-                onOpen={() => setOpen(true)}
-                value={department}
-                label={t("request.department")}
-                onChange={(e) => setdepartment(e.target.value)}>
-                {departmentType.map((e, i) => (
-                  <MenuItem onClick={()=>handleClick(e)}value={e} key={i}>
-                    {e}
-                  </MenuItem>
-                ))}
-              </Select>
-                </FormControl>
-                </Grid>
-  <Grid item xs={5}>
-                  {department && <Autocomplete
-                    options={users}
-                    getOptionLabel={(user) => user.display_name} // Assuming the user object has a "name" property
-                    value={selectedUser ? selectedUser.display_name : null}
-                    onChange={(event, newValue) => {
-                      setSelectedUser(newValue.id);
+                  <Grid container spacing={2}>
+                    <Grid item xs={5}>
+                      <FormControl fullWidth>
+                        <InputLabel id="demo-controlled-open-select-label">
+                          {t("request.department")}
+                        </InputLabel>
+                        <Select
+                          labelId="demo-controlled-open-select-label"
+                          id="demo-controlled-open-select"
+                          open={open}
+                          style={{ marginBottom: "15px" }}
+                          onClose={() => setOpen(false)}
+                          onOpen={() => setOpen(true)}
+                          value={department}
+                          label={t("request.department")}
+                          onChange={(e) => setdepartment(e.target.value)}
+                        >
+                          {departmentType.map((e, i) => (
+                            <MenuItem
+                              onClick={() => handleClick(e)}
+                              value={e}
+                              key={i}
+                            >
+                              {e}
+                            </MenuItem>
+                          ))}
+                        </Select>
+                      </FormControl>
+                    </Grid>
+                    <Grid item xs={5}>
+                      {department && (
+                        <Autocomplete
+                          options={users}
+                          getOptionLabel={(user) => user.name} // Assuming the user object has a "name" property
+                          value={
+                            selectedUser ? selectedUser : null
+                          }
+                          onChange={(event, newValue) => {
+                            console.log(newValue)
+                            setSelectedUser(newValue.name);
+                            setSelectedUserId(newValue.id);
+                          }}
+                          renderInput={(params) => (
+                            <TextField {...params} label="Select User" />
+                          )}
+                        />
+                      )}
+                    </Grid>
+                    <Grid item xs={2}>
+                      {props.CategoriesId && (
+                        <FormControl>
+                          <InputLabel id="demo-controlled-open-select-label">
+                            {t("request.status")}
+                          </InputLabel>
+                          <Select
+                            labelId="demo-controlled-open-select-label"
+                            id="demo-controlled-open-select"
+                            open={statusOpen}
+                            onClose={() => setStatudOpen(false)}
+                            onOpen={() => setStatudOpen(true)}
+                            value={status}
+                            label={t("request.status")}
+                            onChange={(e) => setStatus(e.target.value)}
+                          >
+                            {statusType.map((e, i) => (
+                              <MenuItem onClick={handleClose} value={e} key={i}>
+                                {e}
+                              </MenuItem>
+                            ))}
+                          </Select>
+                        </FormControl>
+                      )}
+                    </Grid>
+                  </Grid>
+                  <TextField
+                    fullWidth
+                    label={t("request.request")}
+                    value={request}
+                    style={{ margin: "15px 0" }}
+                    helperText={
+                      errorMessage.nameerror ? errorMessage.nameerror : ""
+                    }
+                    error={errorMessage.nameerror ? true : false}
+                    onChange={(e) => {
+                      setrequest(e.target.value);
                     }}
-                    renderInput={(params) => <TextField {...params}  label="Select User" />}
-                  />}
-                   </Grid>
-              <Grid item xs={2}>{props.CategoriesId && <FormControl>
-                <InputLabel id="demo-controlled-open-select-label" >
-                      {t("request.status")}
-                    </InputLabel>
-            <Select
-              labelId="demo-controlled-open-select-label"
-              id="demo-controlled-open-select"
-              open={statusOpen}
-              onClose={() => setStatudOpen(false)}
-              onOpen={() => setStatudOpen(true)}
-              value={status}
-              label={t("request.status")}
-              onChange={(e) => setStatus(e.target.value)}
-            >
-              {statusType.map((e, i) => (
-                <MenuItem onClick={handleClose} value={e} key={i}>
-                  {e}
-                </MenuItem>
-              ))}
-            </Select>
-            </FormControl>}
-</Grid>
-</Grid>
-            <TextField
-            fullWidth
-            label={t("request.request")}
-            value={request}
-            style={{ margin: "15px 0" }}
-            helperText={
-              errorMessage.nameerror ? errorMessage.nameerror : ""
-            }
-            error={errorMessage.nameerror ? true : false}
-            onChange={(e) => {
-              setrequest(e.target.value);
-            }}
-          />
-         <Grid container spacing={2}>
-      <Grid item sm={6} xs={12} style={{ marginBottom: "15px" }}>
-        <FormControl fullWidth>
-          <InputLabel id="demo-controlled-open-select-label">
-          {t("request.guestCalled")}
-          </InputLabel>
-          <Select
-            labelId="demo-controlled-open-select-label"
-            id="demo-controlled-open-select"
-            open={callOpen}
-            onClose={() => setCallOpen(false)}
-            onOpen={() => setCallOpen(true)}
-            value={guestCalled}
-            label={t("request.guestCalled")}
-            onChange={(e) => setguestCalled(e.target.value)}
-          >
-            <MenuItem value={false}>No</MenuItem>
-            <MenuItem value={true}>Yes</MenuItem>
-          </Select>
-        </FormControl>
-      </Grid>
-      <Grid item sm={6} xs={12}>
-        <TextField
-          fullWidth
-          inputProps={{ inputMode: 'numeric', pattern: '[0-9]*',min: 0 }}
-          type="number"
-          label={t("request.followUp")}
-          value={followUp}
-          helperText={errorMessage.nameerror ? errorMessage.nameerror : ''}
-          error={errorMessage.nameerror ? true : false}
-          onChange={(e) => {
-            setfollowUp(e.target.value);
-          }}
-        />
-      </Grid>
-    </Grid>
-                <Grid item xs={12}>
-                  {isLoading ? (
-                    <Button size="large" sx={{ marginRight: 4 }}>
-                      <CircularProgress />
-                    </Button>
-                  ) : (
-                    <Button
-                      type="submit"
-                      variant="contained"
-                      size="large"
-                      sx={{ marginRight: 4 }}
-                    >
-                      {props.CategoriesId
-                        ? t("forms.btn.Update")
-                        : t("forms.btn.Submit")}
-                    </Button>
+                  />
+                  {props.CategoriesId && (
+                    <Grid container spacing={2}>
+                      <Grid
+                        item
+                        sm={4}
+                        xs={12}
+                        style={{ marginBottom: "15px" }}
+                      >
+                        <FormControl fullWidth>
+                          <InputLabel id="demo-controlled-open-select-label">
+                            {t("request.guestCalled")}
+                          </InputLabel>
+                          <Select
+                            labelId="demo-controlled-open-select-label"
+                            id="demo-controlled-open-select"
+                            open={callOpen}
+                            onClose={() => setCallOpen(false)}
+                            onOpen={() => setCallOpen(true)}
+                            value={guestCalled}
+                            label={t("request.guestCalled")}
+                            onChange={(e) => setguestCalled(e.target.value)}
+                          >
+                            <MenuItem value={false}>No</MenuItem>
+                            <MenuItem value={true}>Yes</MenuItem>
+                          </Select>
+                        </FormControl>
+                      </Grid>
+                      {guestCalled&&<Grid item sm={4} xs={12}>
+                        <TextField
+                          fullWidth
+                          inputProps={{
+                            inputMode: "numeric",
+                            pattern: "[0-9]*",
+                            min: 0,
+                          }}
+                          type="number"
+                          label={t("request.calles")}
+                          value={noCalls}
+                          helperText={
+                            errorMessage.nameerror ? errorMessage.nameerror : ""
+                          }
+                          error={errorMessage.nameerror ? true : false}
+                          onChange={(e) => {
+                            setNoCalls(e.target.value);
+                          }}
+                        />
+                      </Grid>}
+                      <Grid item sm={4} xs={12}>
+                        <TextField
+                          fullWidth
+                          inputProps={{
+                            inputMode: "numeric",
+                            pattern: "[0-9]*",
+                            min: 0,
+                          }}
+                          type="number"
+                          label={t("request.followUp")}
+                          value={followUp}
+                          helperText={
+                            errorMessage.nameerror ? errorMessage.nameerror : ""
+                          }
+                          error={errorMessage.nameerror ? true : false}
+                          onChange={(e) => {
+                            setfollowUp(e.target.value);
+                          }}
+                        />
+                      </Grid>
+                    </Grid>
                   )}
+                  <Grid item xs={12}>
+                    {isLoading ? (
+                      <Button size="large" sx={{ marginRight: 4 }}>
+                        <CircularProgress />
+                      </Button>
+                    ) : (
+                      <Button
+                        type="submit"
+                        variant="contained"
+                        size="large"
+                        sx={{ marginRight: 4 }}
+                      >
+                        {props.CategoriesId
+                          ? t("forms.btn.Update")
+                          : t("forms.btn.Submit")}
+                      </Button>
+                    )}
 
-                  <Button
-                    variant="outlined"
-                    size="large"
-                    onClick={() => {
-                      setErrorMessage("");
-                      setguestName("");
-                      // setImageAsFile("");
-                      // setFile("");
-                      setIsLoading(false);
-                      props.handleClose();
-                    }}
-                  >
-                    {t("forms.btn.Cancel")}
-                  </Button>
-                 
-                </Grid>
+                    <Button
+                      variant="outlined"
+                      size="large"
+                      onClick={() => {
+                        setErrorMessage("");
+                        setguestName("");
+                        // setImageAsFile("");
+                        // setFile("");
+                        setIsLoading(false);
+                        props.handleClose();
+                      }}
+                    >
+                      {t("forms.btn.Cancel")}
+                    </Button>
+                  </Grid>
                 </Grid>
               </Grid>
             </form>

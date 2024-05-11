@@ -118,6 +118,8 @@
     "request.yes":"Yes",
     "request.orderTaker":"Order Taker Name",
     "request.followUp":"Follow up call",
+    "request.calles":"Number of calls",
+    "request.followup":"Follow Up",
     "category.page.form.edit.Category": "Edit User",
     "employee.form.addBtn": "Add User",
   "user-detail.table.image": "IMAGE",
