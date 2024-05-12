@@ -132,18 +132,17 @@
   "user-detail.table.city": "City",
   "user-detail.table.department": "Department",
   "user-detail.table.password": "Password",
-  "cities.newCity":"Add new Category",
-  "cities.noCity":"Categories Not Found",
-  "cities.editCity":"Edit Category",
-  "cities.nameEN":"Category name in English",
-  "cities.nameAR":"Category name in Arabic",
-  "cities.raduis":"Raduis around the supplier in Meter",
-  "cities.confirmdelete":"Are you sure you want to delete this Category?",
+  "cities.newCity":"Add new Department",
+  "cities.noCity":"Departments Not Found",
+  "cities.editCity":"Edit Department",
+  "cities.nameEN":"Department name in English",
+  "cities.nameAR":"Department name in Arabic",
+  "cities.confirmdelete":"Are you sure you want to delete this Department?",
 
-  "cities.newArea":"Add new Request",
-  "cities.editArea":"Edit Request",
-  "cities.selectCity":"Select Category",
-  "cities.AreanameEN":"Request name in English",
-  "cities.AreanameAR":"Request name in Arabic"
+  "cities.newArea":"Add new Subdepartment",
+  "cities.editArea":"Edit Subdepartment",
+  "cities.selectCity":"Select Department",
+  "cities.AreanameEN":"Subdepartment name in English",
+  "cities.AreanameAR":"Subdepartment name in Arabic"
 
 }
