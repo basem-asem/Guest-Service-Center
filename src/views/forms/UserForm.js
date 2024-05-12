@@ -123,6 +123,10 @@ const Serviceform = (props) => {
         // address: address,
         password: password,
       };
+      imageUploading("photo_url", imageAsFile).then((firebase_url) => {
+        if (imageAsFile) {
+          userObject.photo_url = firebase_url;
+        }
       if (!props.CategoriesId) {
         createFirebaseAccountAndDocument(userObject).then((action_message) => {
           props.handleClose();
@@ -131,12 +135,7 @@ const Serviceform = (props) => {
             message: t(action_message),
           });
         });
-      }
-      imageUploading("photo_url", imageAsFile).then((firebase_url) => {
-        if (imageAsFile) {
-          userObject.photo_url = firebase_url;
-        }
-
+      }else{
         Create_Update_Doc("users", userObject, props.CategoriesId).then(
           (action_message) => {
             props.handleClose();
@@ -146,8 +145,9 @@ const Serviceform = (props) => {
             });
           }
         );
+      }
       });
-    }
+  }
   };
   const handleDelete = async () => {
     await deleteDoc(doc(db, "users", props.CategoriesId)).then(() => {

@@ -273,16 +273,16 @@ const handleSubcollectionDelete = async (categoryId, subcategoryId) => {
         aria-labelledby="alert-dialog-title"
         aria-describedby="alert-dialog-description"
       >
-        <DialogTitle id="alert-dialog-title">{t("form.dialogtitle.delete")}</DialogTitle>
+        <DialogTitle id="alert-dialog-title">{t("forms.btn.Delete.category")}</DialogTitle>
         <DialogContent>
           <DialogContentText id="alert-dialog-description">
           {t("cities.confirmdelete")}
           </DialogContentText>
         </DialogContent>
         <DialogActions>
-          <Button onClick={handlePopclose}>{t("form.btn.disagree")}</Button>
+          <Button onClick={handlePopclose}>{t("dailog.btn.disagree")}</Button>
           <Button onClick={handleDelete} autoFocus>
-          {t("form.btn.agree")}
+          {t("dailog.btn.agree")}
           </Button>
         </DialogActions>
       </Dialog>

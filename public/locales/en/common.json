@@ -69,6 +69,7 @@
     "form.search": "Search",
     
     "forms.btn.Delete": "Delete",
+    "forms.btn.Delete.category": "Delete Category",
     "forms.btn.Submit": "Submit",
     "forms.btn.Update": "Update",
     "forms.btn.Cancel": "Cancel",
