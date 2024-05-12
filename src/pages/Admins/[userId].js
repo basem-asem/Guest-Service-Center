@@ -44,7 +44,7 @@ function userId() {
       setIsLoading(false);
     }
 
-    const data = query(userOrderRef, where("orderResId", "==", userId));
+    const data = query(userOrderRef, where("orderRes", "==", user.display_name));
     onSnapshot(data, (querySnapshot) => {
       const productOrderarr = [];
       querySnapshot.docs.map(async (doc) => {

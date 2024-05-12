@@ -51,13 +51,7 @@ const RequestForm = (props) => {
   const [guestCalled, setguestCalled] = useState(false);
   const [followUp, setfollowUp] = useState(null);
   const [noCalls, setNoCalls] = useState(null);
-  const departmentType = [
-    "House keeping",
-    "Engineering",
-    "Room Service",
-    "Security",
-    "General",
-  ];
+  
   const statusType = ["Pending", "Work on it", "Completed"];
   const orderTakerId = Cookies.get("_isAdmin");
   // const [imageAsFile, setImageAsFile] = useState("");
@@ -69,7 +63,6 @@ const RequestForm = (props) => {
 
   const [users, setUsers] = useState([]);
   const [selectedUser, setSelectedUser] = useState('');
-  const [selectedUserId, setSelectedUserId] = useState('');
   const router = useRouter();
 
   const [anchorEl, setAnchorEl] = useState(null);
@@ -121,7 +114,7 @@ const RequestForm = (props) => {
       //   if (imageAsFile) {
       //     file = firebase_url;
       //   }
-
+  
       const requestData = {
         guestName: guestName,
         guestRM: guestRM,
@@ -135,7 +128,6 @@ const RequestForm = (props) => {
         guestCalled: guestCalled,
         followUp: followUp,
         noCalls: noCalls,
-        orderResId: selectedUserId,
       };
       
       if (!props.CategoriesId) {
@@ -200,7 +192,6 @@ const RequestForm = (props) => {
         setRequestDoneTime(data.requestDoneTime);
         setStatus(data.status);
         setSelectedUser(data.orderRes); // Set user data to selectedUser state
-        console.log(data.orderRes.name)
       }
     };
     
@@ -332,21 +323,24 @@ const RequestForm = (props) => {
                     </Grid>
                     <Grid item xs={5}>
                       {department && (
-                        <Autocomplete
-                          options={users}
-                          getOptionLabel={(user) => user.name} // Assuming the user object has a "name" property
-                          value={
-                            selectedUser ? selectedUser : null
-                          }
-                          onChange={(event, newValue) => {
-                            console.log(newValue)
-                            setSelectedUser(newValue.name);
-                            setSelectedUserId(newValue.id);
+                        <FormControl fullWidth>
+                        <InputLabel id="select-user-label">Select User</InputLabel>
+                        <Select
+                          labelId="select-user-label"
+                          id="select-user"
+                          value={selectedUser}
+                          onChange={(e) => {
+                            setSelectedUser(e.target.value);
                           }}
-                          renderInput={(params) => (
-                            <TextField {...params} label="Select User" />
-                          )}
-                        />
+                          label="Select User"
+                        >
+                          {users.map((user) => (
+                            <MenuItem key={user.id} value={user.name}>
+                              {user.name}
+                            </MenuItem>
+                          ))}
+                        </Select>
+                      </FormControl>                      
                       )}
                     </Grid>
                     <Grid item xs={2}>

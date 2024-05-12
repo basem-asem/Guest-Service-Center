@@ -56,7 +56,7 @@ function UserOrderList(props) {
                 <TableCell>{t("request.guestRM")}</TableCell>
                 <TableCell>{t("request.request")}</TableCell>
                 <TableCell>{t("request.status")}</TableCell>
-                <TableCell>{t("table.action")}</TableCell>
+                {/* <TableCell>{t("table.action")}</TableCell> */}
               </TableRow>
             </TableHead>
             <TableBody>
@@ -101,7 +101,7 @@ function UserOrderList(props) {
                           }}
                         />
                       </TableCell>
-                      <TableCell align="center">
+                      {/* <TableCell align="center">
                         <Button>
                           <Link
                             href={{
@@ -111,7 +111,7 @@ function UserOrderList(props) {
                             <Eye titleAccess="View User" htmlColor="blue" />
                           </Link>
                         </Button>
-                      </TableCell>
+                      </TableCell> */}
                     </TableRow>
                   );
                 })
