@@ -99,10 +99,7 @@ const UserTable = ({ children, loading, setLoading, type }) => {
 
   // function for close popup
   const handlePopclose = () => {
-    setBlockpop({
-      open: false,
-      blockid: "",
-    });
+    setShowPop(false);
     setLoading(true);
   };
 
@@ -279,11 +276,6 @@ const UserTable = ({ children, loading, setLoading, type }) => {
         )}
       </Paper>
 
-      <BlockDailog
-        Blockpop={Blockpop}
-        setBlockpop={setBlockpop}
-        handlePopclose={handlePopclose}
-      />
       <DeleteDailog
         handleDelete={handleDelete}
         showPop={showPop}
