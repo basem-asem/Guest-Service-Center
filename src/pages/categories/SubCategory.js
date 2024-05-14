@@ -301,7 +301,7 @@ function SubCategory(props) {
                       size="large"
                       sx={{ marginRight: 4 }}
                     >
-                      {props.SubcategoryEditId ? `${t("forms.btn.Updata")}` : `${t("forms.btn.Submit")}`}
+                      {props.SubcategoryEditId ? `${t("forms.btn.Update")}` : `${t("forms.btn.Submit")}`}
                     </Button>
                   )}
 
