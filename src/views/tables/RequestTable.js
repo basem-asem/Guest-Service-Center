@@ -179,7 +179,7 @@ const UserTable = ({ children, loading, setLoading, type }) => {
                         />
                       </TableCell>
                       <TableCell align="center">{value.orderRes}</TableCell>
-                      <TableCell align="center">{value.department}</TableCell>
+                      <TableCell align="center">{ router.locale == "en"?value.department:value.departmentAR}</TableCell>
                       <TableCell align="center" style={{ padding: "0 10px" }}>
                         <Icon style={{ overflow: "unset" }}>
                           {value.guestCalled ? (

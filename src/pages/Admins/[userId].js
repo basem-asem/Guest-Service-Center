@@ -8,6 +8,7 @@ import {
   where,
   getDoc,
   doc,
+  orderBy,
 } from "firebase/firestore";
 import Card from "@mui/material/Card";
 import Grid from "@mui/material/Grid";
@@ -44,7 +45,7 @@ function userId() {
       setIsLoading(false);
     }
 
-    const data = query(userOrderRef, where("orderRes", "==", user.display_name));
+    const data = query(userOrderRef, where("orderRes", "==", user.display_name),orderBy("created_At","desc"));
     onSnapshot(data, (querySnapshot) => {
       const productOrderarr = [];
       querySnapshot.docs.map(async (doc) => {

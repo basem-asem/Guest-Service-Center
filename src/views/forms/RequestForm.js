@@ -44,6 +44,7 @@ const RequestForm = (props) => {
   const [guestName, setguestName] = useState("");
   const [guestRM, setguestRM] = useState("");
   const [request, setrequest] = useState("");
+  const [requests, setrequests] = useState([]);
   const [department, setdepartment] = useState();
   const [status, setStatus] = useState("");
   const [requestDoneTime, setRequestDoneTime] = useState("");
@@ -199,6 +200,7 @@ const RequestForm = (props) => {
       fetchserviceDetail();
     }
   }, [props.open]);
+  //get the use of the department
   useEffect(() => {
     const fetchUser = async () => {
       const querySnapshot = await getDocs(
@@ -214,7 +216,21 @@ const RequestForm = (props) => {
       }));
       setUsers(fetchedUsers);
     };
+    const fetchRequests = async () => {
+      const querySnapshot = await getDocs(
+        query(
+          collection(db, "categories", department, "requests")
+        )
+      );
+      const fetchRequest = querySnapshot.docs.map((doc) => ({
+        id: doc.id,
+        nameAR:doc.data().areaAR,
+        nameEN:doc.data().areaEN,
+      }));
+      setrequests(fetchRequest);
+    };
     if (department) {
+      fetchRequests();
       fetchUser();
     }
   }, [department]);
@@ -295,7 +311,7 @@ const RequestForm = (props) => {
                     }}
                   />
                   <Grid container spacing={2}>
-                    <Grid item xs={5}>
+                    <Grid item xs={4}>
                       <FormControl fullWidth>
                         <InputLabel id="demo-controlled-open-select-label">
                           {t("request.department")}
@@ -321,8 +337,32 @@ const RequestForm = (props) => {
                         </Select>
                       </FormControl>
                     </Grid>
-                    <Grid item xs={5}>
+                    <Grid item xs={4}>
                       {department && (
+                        <FormControl fullWidth>
+                        <InputLabel id="select-Request-label">Select Request</InputLabel>
+                        <Select
+                          labelId="select-Request-label"
+                          id="select-Request"
+                          value={request}
+                          onChange={(e) => {
+                            setrequest(e.target.value);
+                          }}
+                          label="Select Request"
+                        >
+                          {requests && requests.map((value, index) => (
+                             router.locale == "ar"? (<MenuItem value={value.id} key={index}>
+                              {value.nameAR}
+                            </MenuItem>): (<MenuItem value={value.id} key={index}>
+                              {value.nameEN}
+                            </MenuItem>)
+                          ))}
+                        </Select>
+                      </FormControl>                      
+                      )}
+                    </Grid>
+                    <Grid item xs={4}>
+                      {request && (
                         <FormControl fullWidth>
                         <InputLabel id="select-user-label">Select User</InputLabel>
                         <Select
@@ -343,7 +383,7 @@ const RequestForm = (props) => {
                       </FormControl>                      
                       )}
                     </Grid>
-                    <Grid item xs={2}>
+                    <Grid item xs={6} style={{ marginBottom: "15px", paddingTop:0 }}>
                       {props.CategoriesId && (
                         <FormControl>
                           <InputLabel id="demo-controlled-open-select-label">
@@ -369,19 +409,6 @@ const RequestForm = (props) => {
                       )}
                     </Grid>
                   </Grid>
-                  <TextField
-                    fullWidth
-                    label={t("request.request")}
-                    value={request}
-                    style={{ margin: "15px 0" }}
-                    helperText={
-                      errorMessage.nameerror ? errorMessage.nameerror : ""
-                    }
-                    error={errorMessage.nameerror ? true : false}
-                    onChange={(e) => {
-                      setrequest(e.target.value);
-                    }}
-                  />
                   {props.CategoriesId && (
                     <Grid container spacing={2}>
                       <Grid
