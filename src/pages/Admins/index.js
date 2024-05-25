@@ -252,7 +252,6 @@ function user() {
                             <Link
                               href={{
                                 pathname: `Admins/${item.id}`,
-                               
                               }}
                             >
                               <Eye titleAccess="View User" htmlColor="blue" />

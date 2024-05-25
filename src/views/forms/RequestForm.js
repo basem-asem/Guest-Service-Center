@@ -134,7 +134,12 @@ const RequestForm = (props) => {
       if (!props.CategoriesId) {
         requestData.created_At = new Date();
       }
-      
+      if (status == "Work on it"){
+        requestData.responseTime = new Date();
+      }
+      if (status == "Completed"){
+        requestData.requestDoneTime = new Date();
+      }
       Create_Update_Doc("requests", requestData, props.CategoriesId
       ).then((action_message) => {
         props.handleClose();

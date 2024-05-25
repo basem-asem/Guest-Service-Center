@@ -121,6 +121,9 @@
     "request.followUp":"Follow up call",
     "request.calles":"Number of calls",
     "request.followup":"Follow Up",
+    "request.createdAt":"Start Time",
+    "request.requestDetails":"Request Details",
+    "request.print":"Print Request Details",
 
     "category.page.form.edit.Category": "Edit User",
     "employee.form.addBtn": "Add User",

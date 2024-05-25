@@ -215,15 +215,15 @@ const UserTable = ({ children, loading, setLoading, type }) => {
                         )}
                       </TableCell> */}
                       <TableCell align="center">
-                        {/* <IconButton>
-                          <Link
-                            passHref
-                            href={`/user-detail/${value.uid}`}
-                            locale={locale}
-                          >
+                        <IconButton>
+                        <Link
+                              href={{
+                                pathname: `/user-detail/${value.docid}`,
+                              }}
+                            >
                             <Eye color="info" />
                           </Link>
-                        </IconButton> */}
+                        </IconButton>
                         {/* <IconButton
                           onClick={() => {
                             setBlockpop({
