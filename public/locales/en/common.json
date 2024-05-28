@@ -122,6 +122,8 @@
     "request.calles":"Number of calls",
     "request.followup":"Follow Up",
     "request.createdAt":"Start Time",
+    "request.responseTime":"Request Time",
+    "request.requestDoneTime":"Request Done Time",
     "request.requestDetails":"Request Details",
     "request.print":"Print Request Details",
 

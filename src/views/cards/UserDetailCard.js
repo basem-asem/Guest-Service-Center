@@ -19,7 +19,6 @@ const Detail = ({ label, userDetails }) => {
 const UserDetailCard = forwardRef(({ userDetails }, ref) => {
   const { t } = useTranslation();
   const [isMobileDevice, setIsMobileDevice] = useState(false);
-  const [print, setprint] = useState(false);
   const router = useRouter();
   const statusObj = {
     Accepted: { color: "info" },
@@ -37,7 +36,6 @@ const UserDetailCard = forwardRef(({ userDetails }, ref) => {
   }, []);
 
   const downloadPDF = () => {
-    setprint(true)
     const capture = document.querySelector('.actual-receipt');
     html2canvas(capture).then((canvas) => {
       const imgData = canvas.toDataURL('img/png');
@@ -48,7 +46,6 @@ const UserDetailCard = forwardRef(({ userDetails }, ref) => {
       doc.addImage(imgData, 'PNG', 0, 50, componentWidth, componentHeight);
       doc.save('receipt.pdf');
     });
-    setprint(false)
   };
 
   useImperativeHandle(ref, () => ({
@@ -87,12 +84,12 @@ const UserDetailCard = forwardRef(({ userDetails }, ref) => {
           </Typography>
           {(userDetails?.status == "Work on it" || userDetails?.status == "Completed") && (
             <Typography variant="body1" sx={{ marginTop: 2 }}>
-              <Detail label={t("request.createdAt")} userDetails={new Date(userDetails?.responseTime * 1000).toDateString()} />
+              <Detail label={t("request.responseTime")} userDetails={new Date(userDetails?.responseTime * 1000).toDateString()} />
             </Typography>
           )}
           {userDetails?.status == "Completed" && (
             <Typography variant="body1" sx={{ marginTop: 2 }}>
-              <Detail label={t("request.createdAt")} userDetails={new Date(userDetails?.requestDoneTime * 1000).toDateString()} />
+              <Detail label={t("request.requestDoneTime")} userDetails={new Date(userDetails?.requestDoneTime * 1000).toDateString()} />
             </Typography>
           )}
           {userDetails?.city && (

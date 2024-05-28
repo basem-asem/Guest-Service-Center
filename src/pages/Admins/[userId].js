@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { useRouter } from "next/router";
 import { db } from "src/configs/firebaseConfig";
 import {
@@ -16,8 +16,9 @@ import CardContent from "@mui/material/CardContent";
 import Typography from "@mui/material/Typography";
 import userProfile from "public/images/logos/userProfile.png";
 import UserOrderList from "../../views/tables/UserOrderList";
-import { CircularProgress } from "@mui/material";
+import { Button, CircularProgress } from "@mui/material";
 import useTranslation from "src/@core/hooks/useTranslation";
+import { Printer } from "mdi-material-ui";
 
 function userId() {
   const router = useRouter();
@@ -26,6 +27,13 @@ function userId() {
   const [isLoading, setIsLoading] = useState(true);
   const [userOrderData, setUserOrderData] = useState([]);
   const { t } = useTranslation(router?.locale);
+  const childRef = useRef();
+
+  const print = () => {
+    if (childRef.current) {
+      childRef.current.downloadPDF();
+    }
+  };
 
   const userOrderRef = collection(db, "requests");
 
@@ -106,9 +114,15 @@ function userId() {
                     {t("user.whatsapp")} : {User.whatsapp_number ? User.whatsapp_number : "Not Found"}
                   </Typography> */}
                 </Grid>
+                <Grid item textAlign="right">
+              <Button variant="contained" onClick={print}>
+                <Printer sx={{ marginRight: 1.5 }} />
+                {t("request.print")}
+              </Button>
+            </Grid>
               </Grid>
               <Grid item xs={12} sm={6}>
-                <UserOrderList UserOrderList={userOrderData}></UserOrderList>
+                <UserOrderList UserOrderList={userOrderData}  ref={childRef}/>
               </Grid>
             </CardContent>
           </Card>

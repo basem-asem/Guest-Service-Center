@@ -11,12 +11,14 @@ import {
   TableRow,
   Button,
 } from "@mui/material";
-import React, { useState } from "react";
+import React, { forwardRef, useImperativeHandle, useState } from "react";
 import { AccountEyeOutline, Eye } from "mdi-material-ui";
 import Link from "next/link";
 import { CircularProgress } from "@mui/material";
 import { useRouter } from "next/router";
 import useTranslation from "src/@core/hooks/useTranslation";
+import html2canvas from "html2canvas";
+import jsPDF from "jspdf";
 
 const statusObj = {
   Accepted: { color: "info" },
@@ -25,7 +27,7 @@ const statusObj = {
   Completed: { color: "success" },
 };
 
-function UserOrderList(props) {
+const UserOrderList = forwardRef((props, ref) =>{
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(10);
   const { UserOrderList } = props;
@@ -40,6 +42,23 @@ function UserOrderList(props) {
     setRowsPerPage(+event.target.value);
     setPage(0);
   };
+  const downloadPDF = () => {
+    const capture = document.querySelector('.actual-receipt');
+    html2canvas(capture).then((canvas) => {
+      const imgData = canvas.toDataURL('img/png');
+      const doc = new jsPDF('p', 'mm', 'a4');
+      const componentWidth = doc.internal.pageSize.getWidth();
+      const componentHeight =(doc.internal.pageSize.getHeight()) - 50;
+      console.log(componentWidth, componentHeight)
+      doc.addImage(imgData, 'PNG', 0, 0, componentWidth, componentHeight);
+      doc.save('receipt.pdf');
+    });
+  };
+
+  useImperativeHandle(ref, () => ({
+    downloadPDF,
+  }));
+
   return (
     <div>
       <CardHeader
@@ -47,7 +66,7 @@ function UserOrderList(props) {
         titleTypographyProps={{ variant: "h6", align: "center" }}
       />
       <Paper sx={{ width: "100%", overflow: "hidden" }}>
-        <TableContainer sx={{ maxHeight: 440 }}>
+        <TableContainer sx={{ maxHeight: 440 }}  className="actual-receipt">
           <Table stickyHeader aria-label="sticky table">
             <TableHead>
               <TableRow sx={{ textAlignLast: "center" }}>
@@ -138,6 +157,6 @@ function UserOrderList(props) {
       </Paper>
     </div>
   );
-}
+})
 
 export default UserOrderList;
