@@ -16,6 +16,7 @@ import { db } from "src/configs/firebaseConfig";
 import UserDetailCard from "src/views/cards/UserDetailCard";
 import HotelsTable from "src/views/tables/HotelsTable";
 import UserOrders from "src/views/tables/UserOrders";
+import { useSelector } from 'react-redux';
 
 const UserDetail = () => {
   const router = useRouter();
@@ -26,7 +27,8 @@ const UserDetail = () => {
   const [primeDetail, setPrimeDetail] = useState();
   const [hotels, setHotels] = useState([]);
   const { t } = useTranslation();
-
+  const booleanValue = useSelector((state) => state.boolean.value);
+ console.log(booleanValue)
   const childRef = useRef();
 
   const print = () => {
@@ -86,12 +88,12 @@ const UserDetail = () => {
                 {t("request.requestDetails")}
               </Typography>
             </Grid>
-            <Grid item textAlign="right">
+          {!booleanValue&&  <Grid item textAlign="right">
               <Button variant="contained" onClick={print}>
                 <Printer sx={{ marginRight: 1.5 }} />
                 {t("request.print")}
               </Button>
-            </Grid>
+            </Grid>}
           </Grid>
 
           <Card>

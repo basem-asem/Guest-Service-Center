@@ -9,6 +9,7 @@ import Menu from "mdi-material-ui/Menu";
 // ** Components
 import ModeToggler from "src/@core/layouts/components/shared-components/ModeToggler";
 import UserDropdown from "src/@core/layouts/components/shared-components/UserDropdown";
+import { useSelector } from 'react-redux';
 
 const AppBarContent = (props) => {
   // ** Props
@@ -16,12 +17,13 @@ const AppBarContent = (props) => {
 
   // ** Hook
   const hiddenSm = useMediaQuery((theme) => theme.breakpoints.down("sm"));
+  const booleanValue = useSelector((state) => state.boolean.value);
 
   return (
     <Box
       sx={{
         width: "100%",
-        display: "flex",
+        display: !booleanValue?"flex":"none",
         alignItems: "center",
         justifyContent: "space-between",
       }}
