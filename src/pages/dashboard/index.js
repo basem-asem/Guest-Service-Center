@@ -12,7 +12,7 @@ import ApexChartWrapper from "src/@core/styles/libs/react-apexcharts";
 import { db } from "src/configs/firebaseConfig";
 import LinkCard from "src/views/dashboard/LinkCard";
 import SimpleCard from "src/views/dashboard/SimpleCard";
-
+import RequestChart from "./RequestChart"
 const Dashboard = () => {
   const [count, setCount] = useState({
     user: "",
@@ -73,6 +73,14 @@ const Dashboard = () => {
 
   return (
     <div>
+    <ApexChartWrapper sx={{ marginBottom: "1.5rem"}}>
+      <Grid container sx={12} >
+        <Grid item xs={12}>
+        <RequestChart/>
+        </Grid>
+      </Grid>
+    </ApexChartWrapper>
+
       <ApexChartWrapper>
         <Grid container spacing={6}>
           <Grid item xs={12} md={4}>
@@ -157,10 +165,6 @@ const Dashboard = () => {
         </Grid>
       </ApexChartWrapper>
 
-      <ApexChartWrapper sx={{ marginTop: "1.5rem" }}>
-        <Grid container spacing={6}>
-        </Grid>
-      </ApexChartWrapper>
     </div>
   );
 };
