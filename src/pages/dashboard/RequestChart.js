@@ -20,6 +20,12 @@ const SalesOverview = () => {
         setMonth(event.target.value);
     };
 
+    useEffect(()=>{
+        const date = new Date();
+        const monthNumber = date.getMonth() + 1; // getMonth() returns a zero-based index (0 for January, 1 for February, etc.)
+        setMonth(monthNumber);
+    },[])
+
     useEffect(() => {
         const fetchData = async () => {
             const selectedMonth = parseInt(month);
@@ -99,6 +105,19 @@ const SalesOverview = () => {
                 show: true,
             },
             height: 370,
+            animations: {
+                enabled: true,
+                easing: 'easeinout',
+                speed: 800,
+                animateGradually: {
+                    enabled: true,
+                    delay: 150
+                },
+                dynamicAnimation: {
+                    enabled: true,
+                    speed: 350
+                }
+            }
         },
         colors: [primary, secondary],
         plotOptions: {
@@ -145,7 +164,21 @@ const SalesOverview = () => {
             theme: theme.palette.mode === 'dark' ? 'dark' : 'light',
             fillSeriesColor: false,
         },
+        fill: {
+            type: 'gradient',
+            gradient: {
+                shade: 'dark',
+                type: "vertical",
+                shadeIntensity: 0.5,
+                gradientToColors: undefined,
+                inverseColors: true,
+                opacityFrom: 0.85,
+                opacityTo: 0.85,
+                stops: [0, 100]
+            }
+        }
     };
+    
 
     return (
         <DashboardCard title="Requests Overview" action={
